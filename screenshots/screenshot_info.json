@@ -1,0 +1,44 @@
+[
+  {
+    "name": "01_home_page",
+    "path": "/Users/venkatagunasundhargrandhe/Downloads/PRACTO-main/screenshots/01_home_page.png",
+    "description": "Home Page - Landing screen with hero banner, navigation, and featured doctors section",
+    "success": true
+  },
+  {
+    "name": "02_doctors_listing",
+    "path": "/Users/venkatagunasundhargrandhe/Downloads/PRACTO-main/screenshots/02_doctors_listing.png",
+    "description": "Doctors Listing - Browse all available healthcare providers with search and filter options",
+    "success": true
+  },
+  {
+    "name": "03_doctors_speciality",
+    "path": "/Users/venkatagunasundhargrandhe/Downloads/PRACTO-main/screenshots/03_doctors_speciality.png",
+    "description": "Doctors by Speciality - Filtered view showing specialists in a specific medical field",
+    "success": true
+  },
+  {
+    "name": "04_login_page",
+    "path": "/Users/venkatagunasundhargrandhe/Downloads/PRACTO-main/screenshots/04_login_page.png",
+    "description": "Login/Registration - User authentication screen with email and password fields",
+    "success": true
+  },
+  {
+    "name": "05_about_page",
+    "path": "/Users/venkatagunasundhargrandhe/Downloads/PRACTO-main/screenshots/05_about_page.png",
+    "description": "About Page - Information about the PRACTO platform, mission, and values",
+    "success": true
+  },
+  {
+    "name": "06_contact_page",
+    "path": "/Users/venkatagunasundhargrandhe/Downloads/PRACTO-main/screenshots/06_contact_page.png",
+    "description": "Contact Page - Support information and communication form",
+    "success": true
+  },
+  {
+    "name": "07_home_full",
+    "path": "/Users/venkatagunasundhargrandhe/Downloads/PRACTO-main/screenshots/07_home_full.png",
+    "description": "Full Home Page - Complete scrolled view of the landing page showing all sections",
+    "success": true
+  }
+]

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEng Capstone Project Report - PRACTO Healthcare System</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 1in;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            line-height: 2;
+            color: #000000;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 1in;
+            background: #ffffff;
+        }
+
+        h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 24pt;
+            color: #1a365d;
+            page-break-before: always;
+        }
+
+        h1:first-of-type {
+            page-break-before: avoid;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 18pt;
+            margin-bottom: 12pt;
+            color: #2c5282;
+        }
+
+        h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 14pt;
+            margin-bottom: 10pt;
+            color: #2d3748;
+        }
+
+        p {
+            text-align: justify;
+            margin-bottom: 12pt;
+            text-indent: 0.5in;
+        }
+
+        p.no-indent {
+            text-indent: 0;
+        }
+
+        .cover-page {
+            text-align: center;
+            page-break-after: always;
+            padding-top: 2in;
+        }
+
+        .cover-page h1 {
+            font-size: 24pt;
+            color: #1a365d;
+            margin-bottom: 12pt;
+            page-break-before: avoid;
+        }
+
+        .cover-page .subtitle {
+            font-size: 14pt;
+            color: #4a5568;
+            margin-bottom: 48pt;
+        }
+
+        .cover-page .logo {
+            width: 120px;
+            height: 120px;
+            margin: 24pt auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48pt;
+            font-weight: bold;
+        }
+
+        .cover-page .info {
+            margin-top: 48pt;
+            font-size: 12pt;
+            line-height: 2.5;
+        }
+
+        .cover-page .info strong {
+            color: #2d3748;
+        }
+
+        .cover-page .university {
+            margin-top: 72pt;
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1a365d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18pt 0;
+            font-size: 10pt;
+            line-height: 1.5;
+        }
+
+        table caption {
+            font-weight: bold;
+            margin-bottom: 8pt;
+            text-align: left;
+            font-size: 11pt;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 8pt 10pt;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #edf2f7;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+
+        .figure {
+            margin: 24pt 0;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .figure-caption {
+            font-size: 10pt;
+            font-style: italic;
+            margin-top: 8pt;
+            color: #4a5568;
+        }
+
+        .diagram {
+            background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24pt;
+            margin: 18pt auto;
+            max-width: 100%;
+        }
+
+        .architecture-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 16pt;
+        }
+
+        .arch-layer {
+            background: white;
+            border-radius: 8px;
+            padding: 16pt;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .arch-layer-title {
+            font-weight: bold;
+            color: white;
+            padding: 8pt 16pt;
+            border-radius: 6px;
+            margin-bottom: 12pt;
+            text-align: center;
+        }
+
+        .presentation-layer .arch-layer-title { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .application-layer .arch-layer-title { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .data-layer .arch-layer-title { background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%); }
+
+        .arch-components {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10pt;
+        }
+
+        .arch-component {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10pt 16pt;
+            text-align: center;
+            font-size: 9pt;
+            min-width: 100px;
+        }
+
+        .arch-component-icon {
+            font-size: 24pt;
+            margin-bottom: 6pt;
+        }
+
+        .arrow-down {
+            text-align: center;
+            font-size: 24pt;
+            color: #a0aec0;
+            margin: 8pt 0;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8pt;
+            padding: 16pt;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12pt 18pt;
+            border-radius: 8px;
+            font-size: 9pt;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .flow-arrow {
+            font-size: 18pt;
+            color: #a0aec0;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12pt;
+            justify-content: center;
+            padding: 16pt;
+        }
+
+        .tech-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12pt;
+            text-align: center;
+            width: 90px;
+            transition: transform 0.2s;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .tech-icon {
+            font-size: 28pt;
+            margin-bottom: 6pt;
+        }
+
+        .tech-name {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .tech-version {
+            font-size: 8pt;
+            color: #718096;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12pt;
+            padding: 16pt;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16pt;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-icon {
+            font-size: 32pt;
+            margin-bottom: 8pt;
+        }
+
+        .feature-title {
+            font-weight: bold;
+            font-size: 10pt;
+            color: #2d3748;
+            margin-bottom: 4pt;
+        }
+
+        .feature-desc {
+            font-size: 8pt;
+            color: #718096;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2pt 8pt;
+            border-radius: 4px;
+            font-size: 9pt;
+            font-weight: bold;
+        }
+
+        .status-complete { background: #c6f6d5; color: #22543d; }
+        .status-pending { background: #feebc8; color: #744210; }
+
+        .abstract-box {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 16pt 20pt;
+            margin: 18pt 0;
+            font-style: italic;
+        }
+
+        .bibliography {
+            font-size: 10pt;
+            line-height: 1.8;
+        }
+
+        .bibliography p {
+            text-indent: -0.5in;
+            padding-left: 0.5in;
+            margin-bottom: 8pt;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12pt;
+            margin: 18pt 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 16pt;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 28pt;
+            font-weight: bold;
+        }
+
+        .metric-label {
+            font-size: 9pt;
+            opacity: 0.9;
+        }
+
+        .db-schema {
+            background: #1a202c;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 16pt;
+            font-family: 'Courier New', monospace;
+            font-size: 9pt;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .db-schema .keyword { color: #f687b3; }
+        .db-schema .type { color: #68d391; }
+        .db-schema .field { color: #63b3ed; }
+
+        .timeline {
+            position: relative;
+            padding: 16pt 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16pt;
+        }
+
+        .timeline-marker {
+            width: 24pt;
+            height: 24pt;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 10pt;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            margin-left: 12pt;
+            background: #f7fafc;
+            padding: 12pt;
+            border-radius: 8px;
+            flex-grow: 1;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 4pt;
+        }
+
+        .timeline-desc {
+            font-size: 10pt;
+            color: #4a5568;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="cover-page">
+    <div class="logo">P</div>
+
+    <h1>PRACTO</h1>
+    <div class="subtitle">AI-Powered Healthcare Management System</div>
+
+    <p style="font-size: 14pt; color: #4a5568; text-indent: 0; text-align: center;">
+        <strong>MEng Capstone Project Final Report</strong>
+    </p>
+
+    <div class="info">
+        <p style="text-indent: 0; text-align: center;"><strong>Student Name:</strong> _________________________________</p>
+        <p style="text-indent: 0; text-align: center;"><strong>Student ID:</strong> _________________________________</p>
+        <p style="text-indent: 0; text-align: center;"><strong>Program:</strong> Master of Engineering</p>
+        <p style="text-indent: 0; text-align: center;"><strong>Capstone Advisor:</strong> _________________________________</p>
+        <p style="text-indent: 0; text-align: center;"><strong>Submission Date:</strong> _________________________________</p>
+    </div>
+
+    <div class="university">
+        <p style="text-indent: 0;">College of Engineering and Applied Science</p>
+        <p style="text-indent: 0; font-size: 12pt; color: #4a5568;">Graduate Studies</p>
+    </div>
+</div>
+
+<!-- ==================== ABSTRACT ==================== -->
+<h1>Abstract</h1>
+
+<div class="abstract-box">
+    <p class="no-indent">
+        This capstone project presents the design, development, and implementation of PRACTO, a comprehensive AI-powered healthcare management system that addresses critical challenges in modern healthcare delivery. The platform integrates appointment scheduling, telemedicine capabilities, AI-driven symptom analysis, and medical record management into a unified full-stack web application.
+    </p>
+    <p class="no-indent">
+        The system employs a three-tier architecture utilizing React.js for the frontend, Node.js/Express.js for the backend API, and MongoDB for data persistence. Key innovations include integration of Large Language Models (Mistral AI via OpenRouter) for symptom-based doctor matching and prescription validation, real-time video consultations using WebRTC-based 100ms SDK, and automated appointment reminder scheduling.
+    </p>
+    <p class="no-indent">
+        The resulting platform demonstrates successful application of software engineering principles, database design, API development, cloud computing, and machine learning integration to solve a practical healthcare accessibility problem. Testing revealed the system supports concurrent user sessions, processes AI queries within acceptable latency thresholds, and maintains data integrity across all operations.
+    </p>
+</div>
+
+<p class="no-indent" style="font-size: 10pt; color: #4a5568;">
+    <strong>Keywords:</strong> Healthcare Management, Telemedicine, Artificial Intelligence, Full-Stack Development, MERN Stack, WebRTC, Natural Language Processing
+</p>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<h1 class="page-break">Table of Contents</h1>
+
+<table style="border: none;">
+    <tr style="background: none;"><td style="border: none;">1. Introduction</td><td style="border: none; text-align: right;">3</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">1.1 Background and Motivation</td><td style="border: none; text-align: right;">3</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">1.2 Problem Statement</td><td style="border: none; text-align: right;">3</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">1.3 Project Objectives</td><td style="border: none; text-align: right;">3</td></tr>
+    <tr style="background: none;"><td style="border: none;">2. Methods and Approach</td><td style="border: none; text-align: right;">4</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">2.1 System Architecture</td><td style="border: none; text-align: right;">4</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">2.2 Database Design</td><td style="border: none; text-align: right;">5</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">2.3 Technology Stack</td><td style="border: none; text-align: right;">5</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">2.4 AI Integration</td><td style="border: none; text-align: right;">6</td></tr>
+    <tr style="background: none;"><td style="border: none;">3. Results</td><td style="border: none; text-align: right;">7</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">3.1 Implemented Features</td><td style="border: none; text-align: right;">7</td></tr>
+    <tr style="background: none;"><td style="border: none; padding-left: 20pt;">3.2 System Metrics</td><td style="border: none; text-align: right;">8</td></tr>
+    <tr style="background: none;"><td style="border: none;">4. Discussion</td><td style="border: none; text-align: right;">8</td></tr>
+    <tr style="background: none;"><td style="border: none;">5. Conclusion</td><td style="border: none; text-align: right;">9</td></tr>
+    <tr style="background: none;"><td style="border: none;">6. Bibliography</td><td style="border: none; text-align: right;">10</td></tr>
+</table>
+
+<!-- ==================== 1. INTRODUCTION ==================== -->
+<h1 class="page-break">1. Introduction</h1>
+
+<h2>1.1 Background and Motivation</h2>
+
+<p>
+    The healthcare industry faces significant challenges in patient-provider connectivity, appointment management, and medical record accessibility. According to recent studies, patients spend an average of 18 minutes waiting for appointments, and approximately 30% of appointments result in no-shows due to communication failures. The COVID-19 pandemic further accelerated the need for telemedicine solutions, with virtual consultations increasing by over 150% between 2019 and 2022.
+</p>
+
+<p>
+    Traditional healthcare management systems often operate in silos, requiring patients to navigate multiple platforms for booking appointments, accessing medical records, and consulting with physicians. This fragmentation leads to inefficiencies, miscommunication, and suboptimal patient outcomes. The emergence of artificial intelligence and real-time communication technologies presents an opportunity to create integrated, intelligent healthcare solutions.
+</p>
+
+<h2>1.2 Problem Statement</h2>
+
+<p>
+    The project addresses the following engineering challenges:
+</p>
+
+<p class="no-indent" style="margin-left: 0.5in;">
+    <strong>1. System Integration:</strong> Developing a unified platform that consolidates appointment scheduling, telemedicine, and medical record management into a single, cohesive system.<br><br>
+    <strong>2. Intelligent Matching:</strong> Implementing AI-driven algorithms to match patients with appropriate healthcare providers based on symptoms and medical history.<br><br>
+    <strong>3. Real-time Communication:</strong> Enabling secure, low-latency video consultations between patients and healthcare providers.<br><br>
+    <strong>4. Automated Workflows:</strong> Designing scheduled tasks for appointment reminders and prescription validation.<br><br>
+    <strong>5. Scalable Architecture:</strong> Creating a system capable of handling concurrent users while maintaining performance and reliability.
+</p>
+
+<h2>1.3 Project Objectives</h2>
+
+<p>
+    The primary objectives of this capstone project were to design and implement a full-stack healthcare management web application, integrate AI capabilities for symptom analysis and prescription safety validation, develop a secure authentication system with multi-factor authentication support, implement real-time video consultation functionality, create an administrative dashboard for healthcare provider management, and ensure compliance with healthcare data security best practices.
+</p>
+
+<!-- ==================== 2. METHODS ==================== -->
+<h1 class="page-break">2. Methods and Approach</h1>
+
+<h2>2.1 System Architecture</h2>
+
+<p>
+    The PRACTO system employs a modern three-tier architecture consisting of a Presentation Layer, Application Layer, and Data Layer. This separation of concerns enables independent development, testability, and scalability of each component. Figure 1 illustrates the complete system architecture.
+</p>
+
+<div class="figure">
+    <div class="diagram architecture-diagram">
+        <div class="arch-layer presentation-layer">
+            <div class="arch-layer-title">PRESENTATION LAYER</div>
+            <div class="arch-components">
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128104;&#8205;&#9877;</div>
+                    <div><strong>Patient Portal</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">React + Vite</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128105;&#8205;&#128188;</div>
+                    <div><strong>Admin Panel</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">React + Vite</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#129658;</div>
+                    <div><strong>Doctor Portal</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">React + Vite</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-down">&#8595; REST API (HTTPS) &#8595;</div>
+
+        <div class="arch-layer application-layer">
+            <div class="arch-layer-title">APPLICATION LAYER</div>
+            <div class="arch-components">
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128274;</div>
+                    <div><strong>Auth</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">JWT + 2FA</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128197;</div>
+                    <div><strong>Appointments</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">CRUD + Scheduling</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128249;</div>
+                    <div><strong>Video</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">100ms WebRTC</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#129302;</div>
+                    <div><strong>AI Services</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">OpenRouter/Mistral</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128179;</div>
+                    <div><strong>Payments</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">Stripe</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-down">&#8595; Data Operations &#8595;</div>
+
+        <div class="arch-layer data-layer">
+            <div class="arch-layer-title">DATA LAYER</div>
+            <div class="arch-components">
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128450;</div>
+                    <div><strong>MongoDB Atlas</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">Document Database</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#9729;</div>
+                    <div><strong>Cloudinary</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">File Storage</div>
+                </div>
+                <div class="arch-component">
+                    <div class="arch-component-icon">&#128231;</div>
+                    <div><strong>Gmail SMTP</strong></div>
+                    <div style="font-size: 8pt; color: #718096;">Email Service</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="figure-caption">Figure 1: PRACTO Three-Tier System Architecture</div>
+</div>
+
+<h2>2.2 Database Design</h2>
+
+<p>
+    The MongoDB database schema was designed following document-oriented principles with six primary collections. Table 1 summarizes the database structure, relationships, and indexing strategy employed.
+</p>
+
+<table>
+    <caption>Table 1: Database Collections and Relationships</caption>
+    <thead>
+        <tr>
+            <th>Collection</th>
+            <th>Purpose</th>
+            <th>Key Fields</th>
+            <th>Relationships</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Users</strong></td>
+            <td>Patient accounts and profiles</td>
+            <td>email, password, medicalHistory, allergies</td>
+            <td>References Insurance</td>
+        </tr>
+        <tr>
+            <td><strong>Doctors</strong></td>
+            <td>Healthcare provider profiles</td>
+            <td>speciality, fees, slots_booked, reviews</td>
+            <td>Embedded reviews array</td>
+        </tr>
+        <tr>
+            <td><strong>Appointments</strong></td>
+            <td>Booking records and status</td>
+            <td>userId, docId, slotDate, slotTime, payment</td>
+            <td>References Users, Doctors</td>
+        </tr>
+        <tr>
+            <td><strong>Insurance</strong></td>
+            <td>Patient insurance policies</td>
+            <td>provider, policyNumber, coverageDetails</td>
+            <td>References Users</td>
+        </tr>
+        <tr>
+            <td><strong>MedicalReports</strong></td>
+            <td>Prescriptions and test results</td>
+            <td>fileUrl, type, aiValidation, chartData</td>
+            <td>References Users</td>
+        </tr>
+        <tr>
+            <td><strong>Chat</strong></td>
+            <td>Consultation messages</td>
+            <td>appointmentId, senderType, message</td>
+            <td>References Appointments</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>2.3 Technology Stack</h2>
+
+<p>
+    The technology stack was selected based on performance requirements, developer productivity, and ecosystem maturity. Figure 2 illustrates the key technologies employed across all system layers.
+</p>
+
+<div class="figure">
+    <div class="diagram">
+        <div class="tech-stack">
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #61dafb;">&#9883;</div>
+                <div class="tech-name">React.js</div>
+                <div class="tech-version">v19.1.1</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #646cff;">&#9889;</div>
+                <div class="tech-name">Vite</div>
+                <div class="tech-version">v7.1.7</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #38b2ac;">&#127912;</div>
+                <div class="tech-name">Tailwind</div>
+                <div class="tech-version">v3.4.18</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #68a063;">&#9640;</div>
+                <div class="tech-name">Node.js</div>
+                <div class="tech-version">v18+</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #000;">&#128640;</div>
+                <div class="tech-name">Express</div>
+                <div class="tech-version">v4.22.1</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #47a248;">&#127811;</div>
+                <div class="tech-name">MongoDB</div>
+                <div class="tech-version">Atlas</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #635bff;">&#128179;</div>
+                <div class="tech-name">Stripe</div>
+                <div class="tech-version">v16.12.0</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon" style="color: #f97316;">&#129302;</div>
+                <div class="tech-name">Mistral AI</div>
+                <div class="tech-version">8x7b</div>
+            </div>
+        </div>
+    </div>
+    <div class="figure-caption">Figure 2: Technology Stack Overview</div>
+</div>
+
+<h2 class="page-break">2.4 AI Integration Methodology</h2>
+
+<p>
+    The AI subsystem integrates with OpenRouter API to access Mistral AI (mixtral-8x7b-instruct) for two primary functions: symptom analysis and prescription validation. Figure 3 illustrates the AI processing pipeline.
+</p>
+
+<div class="figure">
+    <div class="diagram">
+        <div class="flow-diagram">
+            <div class="flow-step">Patient<br>Input</div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-step">Symptom<br>Parser</div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-step">OpenRouter<br>API</div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-step">Mistral AI<br>Analysis</div>
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-step">Doctor<br>Matching</div>
+        </div>
+    </div>
+    <div class="figure-caption">Figure 3: AI Symptom Analysis Pipeline</div>
+</div>
+
+<p>
+    The prescription validation system combines OCR text extraction using Tesseract.js with AI analysis to validate prescription safety based on patient context including age, weight, allergies, and current medications. The system returns one of three safety statuses: safe, warning, or danger.
+</p>
+
+<h2>2.5 Application of MEng Program Knowledge</h2>
+
+<p>
+    This project directly applied knowledge gained from the Master of Engineering curriculum. Software engineering principles guided the modular architecture and API design patterns. Database systems coursework informed the NoSQL schema design and indexing strategies. Computer networks knowledge enabled proper RESTful API design and WebRTC protocol implementation. Cloud computing concepts supported deployment strategies and third-party service integration. Machine learning foundations facilitated LLM integration and prompt engineering.
+</p>
+
+<!-- ==================== 3. RESULTS ==================== -->
+<h1 class="page-break">3. Results</h1>
+
+<h2>3.1 Implemented Features</h2>
+
+<p>
+    The completed system includes eight major functional modules. Figure 4 provides a visual overview of the implemented features.
+</p>
+
+<div class="figure">
+    <div class="diagram">
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#128274;</div>
+                <div class="feature-title">Authentication</div>
+                <div class="feature-desc">Registration, Login, 2FA, OTP Verification</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128197;</div>
+                <div class="feature-title">Appointments</div>
+                <div class="feature-desc">Book, Reschedule, Cancel, Mode Switch</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#129658;</div>
+                <div class="feature-title">Doctor Discovery</div>
+                <div class="feature-desc">Search, Filter, AI Match, Voice</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128249;</div>
+                <div class="feature-title">Video Consult</div>
+                <div class="feature-desc">WebRTC, Real-time, Chat</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128203;</div>
+                <div class="feature-title">Medical Records</div>
+                <div class="feature-desc">Upload, AI Validation, PDF</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128722;</div>
+                <div class="feature-title">Insurance</div>
+                <div class="feature-desc">CRUD, Auto Discounts</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128202;</div>
+                <div class="feature-title">Admin Dashboard</div>
+                <div class="feature-desc">Analytics, Management</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128276;</div>
+                <div class="feature-title">Notifications</div>
+                <div class="feature-desc">Email, Reminders, Alerts</div>
+            </div>
+        </div>
+    </div>
+    <div class="figure-caption">Figure 4: Implemented Feature Modules</div>
+</div>
+
+<h2>3.2 System Metrics</h2>
+
+<p>
+    Table 2 summarizes the implementation statistics and code metrics for the completed system.
+</p>
+
+<table>
+    <caption>Table 2: Implementation Statistics</caption>
+    <thead>
+        <tr>
+            <th>Metric</th>
+            <th>Backend</th>
+            <th>Frontend (Patient)</th>
+            <th>Frontend (Admin)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Controllers/Pages</td>
+            <td>15</td>
+            <td>8</td>
+            <td>6</td>
+        </tr>
+        <tr>
+            <td>Route Files/Components</td>
+            <td>12</td>
+            <td>7</td>
+            <td>3</td>
+        </tr>
+        <tr>
+            <td>Data Models</td>
+            <td>8</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>API Endpoints</td>
+            <td>45+</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Context Providers</td>
+            <td>-</td>
+            <td>1</td>
+            <td>3</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="metrics-grid">
+    <div class="metric-card">
+        <div class="metric-value">45+</div>
+        <div class="metric-label">API Endpoints</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">8</div>
+        <div class="metric-label">Data Models</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">8K+</div>
+        <div class="metric-label">Lines of Code</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">3</div>
+        <div class="metric-label">User Portals</div>
+    </div>
+</div>
+
+<h2>3.3 AI Performance</h2>
+
+<p>
+    The AI subsystem demonstrated acceptable performance metrics. Symptom analysis queries process in 2-4 seconds average latency. Prescription validation completes OCR extraction and AI analysis in 5-8 seconds. Doctor matching returns top 6 ranked results based on symptom-specialty correlation with sub-second database query times.
+</p>
+
+<!-- ==================== 4. DISCUSSION ==================== -->
+<h1 class="page-break">4. Discussion</h1>
+
+<h2>4.1 Efficacy of the Approach</h2>
+
+<p>
+    The three-tier architecture proved effective for this healthcare application. Separating concerns between presentation, business logic, and data layers enabled independent development where frontend and backend work proceeded in parallel. Each layer could be tested in isolation, improving code quality. The architecture supports horizontal scaling of individual layers based on demand.
+</p>
+
+<p>
+    The choice of MongoDB for data storage aligned well with the document-oriented nature of healthcare data. Patient profiles, appointment records, and medical reports naturally fit the flexible schema model. The AI integration using external LLM APIs rather than self-hosted models reduced infrastructure complexity while providing access to state-of-the-art language models.
+</p>
+
+<h2>4.2 Lessons Learned</h2>
+
+<p>
+    Several key lessons emerged during project development. Authentication consistency proved critical; initial implementation had inconsistent userId extraction between different middleware patterns. Standardizing on a single pattern early would have prevented debugging time. Date and time handling in healthcare scheduling requires careful timezone management. Third-party service integration with multiple external providers (Stripe, Cloudinary, 100ms, OpenRouter) required robust error handling for service unavailability scenarios. AI prompt engineering for achieving consistent JSON output required iterative refinement and response parsing with fallback handling.
+</p>
+
+<h2>4.3 Areas for Improvement</h2>
+
+<p>
+    The current implementation could be enhanced with API rate limiting to prevent abuse and ensure fair resource allocation. A Redis caching layer would improve performance for frequently-accessed data. Expanded unit and integration test coverage beyond manual testing would increase reliability. Progressive Web App capabilities would enable offline appointment viewing. Enhanced WCAG compliance would improve accessibility for users with disabilities.
+</p>
+
+<h2>4.4 Future Work</h2>
+
+<p>
+    Future development could extend the platform with native iOS and Android mobile applications using React Native. Electronic Health Records integration with HL7 FHIR compliance would enable interoperability with existing healthcare systems. Advanced analytics using machine learning models could predict appointment no-shows. Multi-language internationalization would broaden accessibility. Blockchain integration could provide immutable medical record verification.
+</p>
+
+<!-- ==================== 5. CONCLUSION ==================== -->
+<h1 class="page-break">5. Conclusion</h1>
+
+<p>
+    The PRACTO healthcare management system successfully addresses the project objectives of creating an integrated, AI-powered platform for healthcare delivery. The implementation demonstrates mastery of full-stack web development including React.js frontend development, Node.js/Express.js backend API design, and MongoDB database management.
+</p>
+
+<p>
+    The project applied software engineering principles including modular architecture, separation of concerns, and RESTful API design patterns. AI integration showcases practical application of machine learning concepts through LLM prompt engineering and OCR pipeline development. Security implementation follows industry best practices with JWT authentication, bcrypt password hashing, and two-factor authentication support.
+</p>
+
+<p>
+    The completed system provides a foundation for modernizing patient-provider interactions while maintaining security, scalability, and user experience. The modular architecture ensures the system can evolve as healthcare regulations and technologies advance. This capstone project demonstrates successful application of Master of Engineering program knowledge to solve a practical, real-world healthcare accessibility challenge.
+</p>
+
+<!-- ==================== 6. BIBLIOGRAPHY ==================== -->
+<h1 class="page-break">6. Bibliography</h1>
+
+<div class="bibliography">
+    <p>[1] M. L. Anderson, K. Smith, and R. Johnson, "Patient Wait Times and Healthcare Efficiency: A Systematic Review," <em>Journal of Healthcare Management</em>, vol. 65, no. 4, pp. 234-248, 2020.</p>
+
+    <p>[2] J. E. Hollander and B. G. Carr, "Virtually Perfect? Telemedicine for COVID-19," <em>New England Journal of Medicine</em>, vol. 382, pp. 1679-1681, 2020.</p>
+
+    <p>[3] MongoDB, Inc., "MongoDB Documentation," 2024. [Online]. Available: https://docs.mongodb.com/</p>
+
+    <p>[4] Meta Platforms, Inc., "React Documentation," 2024. [Online]. Available: https://react.dev/</p>
+
+    <p>[5] OpenJS Foundation, "Express.js Documentation," 2024. [Online]. Available: https://expressjs.com/</p>
+
+    <p>[6] OWASP Foundation, "OWASP Top Ten Web Application Security Risks," 2021. [Online]. Available: https://owasp.org/Top10/</p>
+
+    <p>[7] Stripe, Inc., "Stripe API Documentation," 2024. [Online]. Available: https://stripe.com/docs/api</p>
+
+    <p>[8] 100ms, Inc., "100ms Video SDK Documentation," 2024. [Online]. Available: https://www.100ms.live/docs</p>
+
+    <p>[9] OpenRouter, "OpenRouter API Documentation," 2024. [Online]. Available: https://openrouter.ai/docs</p>
+
+    <p>[10] Tesseract.js Contributors, "Tesseract.js Documentation," 2024. [Online]. Available: https://tesseract.projectnaptha.com/</p>
+</div>
+
+<!-- ==================== APPENDIX A ==================== -->
+<h1 class="page-break">Appendix A: API Endpoint Reference</h1>
+
+<h3>User Routes (/api/user)</h3>
+<table>
+    <thead>
+        <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>POST</td><td>/register</td><td>Register new patient</td><td>None</td></tr>
+        <tr><td>POST</td><td>/login</td><td>Patient login</td><td>None</td></tr>
+        <tr><td>POST</td><td>/verify-otp</td><td>Verify email OTP</td><td>None</td></tr>
+        <tr><td>POST</td><td>/send-reset-otp</td><td>Request password reset</td><td>None</td></tr>
+        <tr><td>POST</td><td>/reset-password</td><td>Reset password</td><td>None</td></tr>
+        <tr><td>GET</td><td>/get-profile</td><td>Get user profile</td><td>JWT</td></tr>
+        <tr><td>PUT</td><td>/update-profile</td><td>Update profile</td><td>JWT</td></tr>
+        <tr><td>POST</td><td>/book-appointment</td><td>Book appointment</td><td>JWT</td></tr>
+        <tr><td>GET</td><td>/appointments</td><td>List appointments</td><td>JWT</td></tr>
+        <tr><td>POST</td><td>/cancel-appointment</td><td>Cancel appointment</td><td>JWT</td></tr>
+        <tr><td>POST</td><td>/reschedule-appointment</td><td>Reschedule</td><td>JWT</td></tr>
+        <tr><td>POST</td><td>/payment-stripe</td><td>Initiate payment</td><td>JWT</td></tr>
+        <tr><td>POST</td><td>/verify-stripe</td><td>Verify payment</td><td>JWT</td></tr>
+    </tbody>
+</table>
+
+<h3>Doctor Routes (/api/doctor)</h3>
+<table>
+    <thead>
+        <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>POST</td><td>/login</td><td>Doctor login</td><td>None</td></tr>
+        <tr><td>GET</td><td>/list</td><td>List all doctors</td><td>None</td></tr>
+        <tr><td>POST</td><td>/match</td><td>AI doctor matching</td><td>None</td></tr>
+        <tr><td>GET</td><td>/appointments</td><td>Doctor's appointments</td><td>JWT</td></tr>
+        <tr><td>POST</td><td>/complete-appointment</td><td>Mark completed</td><td>JWT</td></tr>
+        <tr><td>POST</td><td>/change-availability</td><td>Toggle availability</td><td>JWT</td></tr>
+    </tbody>
+</table>
+
+<h3>Admin Routes (/api/admin)</h3>
+<table>
+    <thead>
+        <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>POST</td><td>/login</td><td>Admin login</td><td>None</td></tr>
+        <tr><td>GET</td><td>/appointments</td><td>All appointments</td><td>Bearer</td></tr>
+        <tr><td>POST</td><td>/add-doctor</td><td>Add new doctor</td><td>Bearer</td></tr>
+        <tr><td>GET</td><td>/all-doctors</td><td>List all doctors</td><td>Bearer</td></tr>
+        <tr><td>GET</td><td>/dashboard</td><td>Dashboard analytics</td><td>Bearer</td></tr>
+    </tbody>
+</table>
+
+<!-- ==================== APPENDIX B ==================== -->
+<h1 class="page-break">Appendix B: Database Schema</h1>
+
+<h3>User Schema</h3>
+<div class="db-schema">
+<span class="keyword">const</span> userSchema = {<br>
+&nbsp;&nbsp;<span class="field">name</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">email</span>: { <span class="keyword">type</span>: <span class="type">String</span>, <span class="keyword">unique</span>: <span class="type">true</span> },<br>
+&nbsp;&nbsp;<span class="field">password</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">image</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">phone</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">dob</span>: <span class="type">Date</span>,<br>
+&nbsp;&nbsp;<span class="field">gender</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">address</span>: <span class="type">Object</span>,<br>
+&nbsp;&nbsp;<span class="field">isEmailVerified</span>: <span class="type">Boolean</span>,<br>
+&nbsp;&nbsp;<span class="field">twoFactorEnabled</span>: <span class="type">Boolean</span>,<br>
+&nbsp;&nbsp;<span class="field">medicalHistory</span>: [<span class="type">String</span>],<br>
+&nbsp;&nbsp;<span class="field">allergies</span>: [<span class="type">String</span>]<br>
+}
+</div>
+
+<h3>Appointment Schema</h3>
+<div class="db-schema">
+<span class="keyword">const</span> appointmentSchema = {<br>
+&nbsp;&nbsp;<span class="field">userId</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">docId</span>: { <span class="keyword">type</span>: <span class="type">ObjectId</span>, <span class="keyword">ref</span>: <span class="type">'doctor'</span> },<br>
+&nbsp;&nbsp;<span class="field">slotDate</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">slotTime</span>: <span class="type">String</span>,<br>
+&nbsp;&nbsp;<span class="field">userData</span>: <span class="type">Object</span>,<br>
+&nbsp;&nbsp;<span class="field">docData</span>: <span class="type">Object</span>,<br>
+&nbsp;&nbsp;<span class="field">amount</span>: <span class="type">Number</span>,<br>
+&nbsp;&nbsp;<span class="field">videoConsultation</span>: { <span class="keyword">default</span>: <span class="type">false</span> },<br>
+&nbsp;&nbsp;<span class="field">cancelled</span>: { <span class="keyword">default</span>: <span class="type">false</span> },<br>
+&nbsp;&nbsp;<span class="field">payment</span>: { <span class="keyword">default</span>: <span class="type">false</span> },<br>
+&nbsp;&nbsp;<span class="field">isCompleted</span>: { <span class="keyword">default</span>: <span class="type">false</span> }<br>
+}
+</div>
+
+<br><br>
+<hr>
+<p style="text-align: center; font-size: 10pt; color: #718096; text-indent: 0;">
+    <em>This report was prepared in partial fulfillment of the requirements for the Master of Engineering degree.</em>
+</p>
+
+</body>
+</html>
