@@ -7,7 +7,8 @@ const PatientChat = ({ appointmentId, userId }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(false);
-    const scrollRef = useRef();
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const chatContainerRef = useRef();
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -50,15 +51,21 @@ const PatientChat = ({ appointmentId, userId }) => {
 
     // Poll for new messages every 3 seconds
     useEffect(() => {
-        fetchMessages();
+        fetchMessages().then(() => {
+            setIsInitialLoad(false);
+        });
         const interval = setInterval(fetchMessages, 3000);
         return () => clearInterval(interval);
     }, [appointmentId]);
 
-    // Auto-scroll to bottom
+    // Auto-scroll within chat container only (not the entire page)
+    // Skip on initial load to prevent page jumping
     useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+        if (isInitialLoad) return;
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [messages, isInitialLoad]);
 
     return (
         <div className="flex flex-col h-[400px] w-full bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
@@ -74,7 +81,7 @@ const PatientChat = ({ appointmentId, userId }) => {
             </div>
 
             {/* Message Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
                 {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full opacity-20">
                         <MessageSquare size={48} className="mb-2" />
@@ -100,7 +107,6 @@ const PatientChat = ({ appointmentId, userId }) => {
                         </div>
                     ))
                 )}
-                <div ref={scrollRef} />
             </div>
 
             {/* Input Area */}

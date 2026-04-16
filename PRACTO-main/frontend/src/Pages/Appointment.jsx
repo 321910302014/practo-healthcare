@@ -50,6 +50,11 @@ const Appointment = () => {
   const [payInClinic, setPayInClinic] = useState(false);
   const [isVideoConsultation, setIsVideoConsultation] = useState(false);
 
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [docId]);
+
   useEffect(() => {
     if (doctors && doctors.length > 0) {
       const foundDoc = doctors.find(doc => doc._id === docId);
@@ -286,27 +291,29 @@ const Appointment = () => {
       {/* Slot Selection */}
       <div className="mt-8">
         <h3 className="text-2xl font-bold text-gray-700 mb-4">Available Slots</h3>
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
           {[...Array(docSlots.length)].map((_, i) => (
             <button
               key={i}
               onClick={() => setSlotIndex(i)}
-              className={`px-4 py-2 rounded-md border ${slotIndex === i ? 'border-blue-600 bg-blue-100' : 'border-gray-300'}`}
+              className={`px-4 py-2 rounded-md border flex-shrink-0 ${slotIndex === i ? 'border-blue-600 bg-blue-100' : 'border-gray-300'}`}
             >
               {daysOfWeek[(new Date().getDay() + i) % 7]}
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-4 gap-4">
-          {(docSlots[slotIndex] || []).map((slot, idx) => (
-            <button
-              key={idx}
-              onClick={() => setSelectedSlot(slot)}
-              className={`p-2 rounded-md border ${selectedSlot === slot ? 'border-green-600 bg-green-100' : 'border-gray-300'}`}
-            >
-              {formatFullDateTime(slot.datetime)}
-            </button>
-          ))}
+        <div className="max-h-80 overflow-y-auto pr-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {(docSlots[slotIndex] || []).map((slot, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedSlot(slot)}
+                className={`p-2 rounded-md border ${selectedSlot === slot ? 'border-green-600 bg-green-100' : 'border-gray-300'}`}
+              >
+                {formatFullDateTime(slot.datetime)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
