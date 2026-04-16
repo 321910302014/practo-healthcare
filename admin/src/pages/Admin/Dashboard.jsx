@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 import { AdminContext } from '../../context/AdminContext';
 import { AppContext } from '../../context/AppContext';
@@ -8,6 +9,7 @@ import DoctorChat from '../../components/DoctorChat';
 const Dashboard = () => {
   const { aToken, getDashData, cancelAppointment, dashData } = useContext(AdminContext);
   const { slotDateFormat } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const [openChatId, setOpenChatId] = useState(null);
 
@@ -80,12 +82,9 @@ const Dashboard = () => {
                       {openChatId === item._id ? 'Close Chat' : 'Open Chat'}
                     </button>
 
-                    {/* ✅ New Join Video Call Button */}
                     {item.videoConsultation && item.payment && (
                       <button
-                        onClick={() =>
-                          window.open(`/video-call?room=${item._id}&user=${item.docData._id}&role=doctor`, "_blank")
-                        }
+                        onClick={() => navigate(`/video-call/${item._id}`)}
                         className="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded"
                       >
                         Join Video Call

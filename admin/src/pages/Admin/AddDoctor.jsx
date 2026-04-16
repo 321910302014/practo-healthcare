@@ -21,7 +21,7 @@ const AddDoctor = () => {
   const [languagesKnown, setLanguagesKnown] = useState([]);
 
   const { backendUrl } = useContext(AppContext);
-  const { aToken } = useContext(AdminContext);
+  const { aToken, getAllDoctors } = useContext(AdminContext);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -59,6 +59,9 @@ const AddDoctor = () => {
 
       if (data.success) {
         toast.success(data.message);
+
+        // Refresh cached doctor list so DoctorsList shows the new entry
+        getAllDoctors?.();
 
         // Reset form fields
         setDocImg(null);

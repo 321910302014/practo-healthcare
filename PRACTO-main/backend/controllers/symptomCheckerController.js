@@ -64,6 +64,7 @@ Keep arrays short (3 items max each). Use plain words for specializations that m
           "HTTP-Referer": FRONTEND,
           "Content-Type": "application/json",
         },
+        timeout: 30000,
       }
     );
 

@@ -20,7 +20,10 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
 });
 
 // ========= OTP FUNCTIONS =========
@@ -37,12 +40,12 @@ const sendOTP = async (req, res) => {
 
         await userModel.updateOne({ email }, { otp, otpExpires });
 
-        await transporter.sendMail({
+        transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Your OTP Code',
             text: `Your OTP is ${otp}. It is valid for 5 minutes.`
-        });
+        }).catch(err => console.error('OTP email failed (non-blocking):', err.message));
 
         res.json({ success: true, message: 'OTP sent' });
     } catch (error) {
@@ -63,12 +66,12 @@ const sendResetOTP = async (req, res) => {
         user.resetOtpExpires = otpExpires;
         await user.save();
 
-        await transporter.sendMail({
+        transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Password Reset OTP',
             text: `Your password reset OTP is ${otp}. It is valid for 5 minutes.`
-        });
+        }).catch(err => console.error('Reset OTP email failed (non-blocking):', err.message));
 
         res.json({ success: true, message: 'OTP sent to email' });
     } catch (error) {
@@ -143,7 +146,7 @@ const registerUser = async (req, res) => {
         }
 
         if (password.length < 8) {
-            return res.json({ success: false, message: "Please enter a strong password" });
+            return res.json({ success: false, message: "Password must be at least 8 characters" });
         }
 
         const existingUser = await userModel.findOne({ email });
@@ -154,28 +157,18 @@ const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const otpExpires = Date.now() + 5 * 60 * 1000;
-
         const newUser = new userModel({
             name,
             email,
             password: hashedPassword,
-            otp,
-            otpExpires,
-           isEmailVerified: false
+            isEmailVerified: true
         });
 
         await newUser.save();
 
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: 'Verify your email - OTP Code',
-            text: `Your OTP is ${otp}. It will expire in 5 minutes.`
-        });
+        const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
 
-        res.json({ success: true, message: 'OTP sent to your email for verification' });
+        res.json({ success: true, token, message: 'Account created successfully' });
 
     } catch (error) {
         console.log(error);
@@ -284,34 +277,53 @@ const bookAppointment = async (req, res) => {
       isVideoConsultation
     } = req.body;
 
-    console.log("📌 DOC ID RECEIVED =", docId);
+    console.log("📌 bookAppointment called", { docId, userId, slotDate, slotTime, insuranceId, payInClinic, isVideoConsultation });
+
+    if (!docId || !slotDate || !slotTime) {
+      return res.json({ success: false, message: "Missing required booking fields" });
+    }
 
     const doc = await doctorModel.findById(docId).select("-password");
 
-    if (!doc || !doc.available) {
-      return res.json({ success: false, message: "Doctor not found or unavailable" });
+    if (!doc) {
+      console.log("⚠️  bookAppointment: doctor not found", docId);
+      return res.json({ success: false, message: "Doctor not found" });
+    }
+    if (!doc.available) {
+      console.log("⚠️  bookAppointment: doctor unavailable", docId);
+      return res.json({ success: false, message: "Doctor is currently unavailable" });
     }
 
     const baseFee = typeof doc.fees === 'number' ? doc.fees : doc.fee;
     if (!baseFee || isNaN(baseFee)) {
+      console.log("⚠️  bookAppointment: fee invalid", doc.fees, doc.fee);
       return res.status(400).json({ success: false, message: "Doctor fee is missing or invalid." });
     }
 
     const slots_booked = { ...doc.slots_booked };
     if (slots_booked[slotDate]?.includes(slotTime)) {
+      console.log("⚠️  bookAppointment: slot already booked", slotDate, slotTime);
       return res.json({ success: false, message: "Slot not available" });
     } else {
       slots_booked[slotDate] = [...(slots_booked[slotDate] || []), slotTime];
     }
 
     const user = await userModel.findById(userId).select("-password");
+    if (!user) {
+      console.log("⚠️  bookAppointment: user not found", userId);
+      return res.json({ success: false, message: "User not found" });
+    }
 
     let finalAmount = baseFee;
     let selectedInsurance = null;
 
     if (insuranceId) {
       const insurance = await Insurance.findById(insuranceId);
-      selectedInsurance = insurance?.toObject();
+      if (!insurance) {
+        console.log("⚠️  bookAppointment: insurance not found", insuranceId);
+        return res.json({ success: false, message: "Selected insurance not found" });
+      }
+      selectedInsurance = insurance.toObject();
       finalAmount = baseFee * 0.1; // 90% off
     }
 
@@ -327,12 +339,18 @@ const bookAppointment = async (req, res) => {
       });
     }
 
-    // Build appointment datetime
+    // Build appointment datetime — accepts "10:30 AM", "10:30 am", or "14:30"
     const [day, month, year] = slotDate.split('_').map(Number);
-    const [time, modifier] = slotTime.split(' ');
-    let [hours, minutes] = time.split(':').map(Number);
-    if (modifier.toLowerCase() === 'pm' && hours !== 12) hours += 12;
-    if (modifier.toLowerCase() === 'am' && hours === 12) hours = 0;
+    const timeMatch = String(slotTime).trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+    if (!timeMatch || !day || !month || !year) {
+      console.log("⚠️  bookAppointment: bad date/time format", slotDate, slotTime);
+      return res.status(400).json({ success: false, message: "Invalid slot date or time format" });
+    }
+    let hours = parseInt(timeMatch[1], 10);
+    const minutes = parseInt(timeMatch[2], 10);
+    const modifier = timeMatch[3]?.toUpperCase();
+    if (modifier === 'PM' && hours !== 12) hours += 12;
+    if (modifier === 'AM' && hours === 12) hours = 0;
     const appointmentDateTime = new Date(year, month - 1, day, hours, minutes, 0);
 
     const appointment = new appointmentModel({
@@ -352,10 +370,9 @@ const bookAppointment = async (req, res) => {
     await appointment.save();
     await doctorModel.findByIdAndUpdate(docId, { slots_booked });
 
-    // ✅ Confirmation Email
+    // Fire-and-forget confirmation email (don't block booking response on SMTP latency)
     if (user?.email && (!isVideoConsultation || (isVideoConsultation && !payInClinic))) {
-  const subject = '✅ Appointment Confirmed - Prescripta HealthCare';
-
+      const subject = '✅ Appointment Confirmed - Prescripta HealthCare';
       const message = `
 Hi ${user.name || 'Patient'},
 
@@ -369,9 +386,12 @@ ${payInClinic ? '💡 Please pay at the clinic reception during your visit.\n' :
 
 Thank you for choosing Prescripta HealthCare.
       `;
-      await sendEmail(user.email, subject, message);
+      sendEmail(user.email, subject, message).catch(err =>
+        console.error('Confirmation email failed (non-blocking):', err.message)
+      );
     }
 
+    console.log("✅ bookAppointment: saved", appointment._id.toString());
     return res.json({ success: true, message: "Appointment Booked", appointment });
 
   } catch (error) {
@@ -433,8 +453,9 @@ Regards,
 Prescripta HealthCare Team
       `;
 
-      await sendEmail(userData.email, subject, message);
-      console.log(`📨 Cancellation email sent to ${userData.email}`);
+      sendEmail(userData.email, subject, message).catch(err =>
+        console.error('Cancellation email failed (non-blocking):', err.message)
+      );
     }
 
     res.json({ success: true, message: 'Appointment Cancelled' });
@@ -488,19 +509,19 @@ const switchAppointmentMode = async (req, res) => {
         appointment.videoConsultation = true;
         await appointment.save();
 
-        // Send confirmation email
+        // Send confirmation email (non-blocking)
         if (appointment.userData?.email) {
-          await sendEmail(appointment.userData.email, '✅ Video Appointment Confirmed', `
+          sendEmail(appointment.userData.email, '✅ Video Appointment Confirmed', `
 Hi ${appointment.userData.name},
 
 Your appointment with Dr. ${appointment.docData.name} has been changed to a video consultation.
 
-🗓 Date: ${appointment.slotDate}  
-⏰ Time: ${appointment.slotTime}  
+🗓 Date: ${appointment.slotDate}
+⏰ Time: ${appointment.slotTime}
 ✅ Paid already — Join link will be available at the appointment time.
 
 Prescripta HealthCare
-          `);
+          `).catch(err => console.error('Switch-mode email failed (non-blocking):', err.message));
         }
 
         return res.json({ success: true, message: "Switched to video mode. You can join directly." });
@@ -513,17 +534,17 @@ Prescripta HealthCare
       await appointment.save();
 
       if (appointment.userData?.email) {
-        await sendEmail(appointment.userData.email, '✅ In-Clinic Appointment Confirmed', `
+        sendEmail(appointment.userData.email, '✅ In-Clinic Appointment Confirmed', `
 Hi ${appointment.userData.name},
 
 Your appointment with Dr. ${appointment.docData.name} has been changed to an in-clinic visit.
 
-🗓 Date: ${appointment.slotDate}  
-⏰ Time: ${appointment.slotTime}  
+🗓 Date: ${appointment.slotDate}
+⏰ Time: ${appointment.slotTime}
 💡 You may pay in clinic or keep your online payment.
 
 Prescripta HealthCare
-        `);
+        `).catch(err => console.error('Switch-mode email failed (non-blocking):', err.message));
       }
 
       return res.json({ success: true, message: "Switched to in-clinic mode." });
@@ -640,8 +661,9 @@ Regards,
 Prescripta HealthCare Team
         `;
 
-        await sendEmail(userData.email, subject, message);
-        console.log(`📨 Confirmation email sent to ${userData.email}`);
+        sendEmail(userData.email, subject, message).catch(err =>
+          console.error('Payment confirmation email failed (non-blocking):', err.message)
+        );
       }
 
       return res.json({ success: true, message: 'Payment Successful & Appointment Confirmed' });
@@ -712,7 +734,9 @@ New Slot:
 
 Thank you for choosing Prescripta HealthCare.
       `;
-      await sendEmail(appointment.userData.email, subject, message);
+      sendEmail(appointment.userData.email, subject, message).catch(err =>
+        console.error('Reschedule email failed (non-blocking):', err.message)
+      );
     }
 
     res.json({ success: true, message: "Appointment rescheduled", appointment });

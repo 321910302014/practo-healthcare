@@ -18,38 +18,45 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
 const VideoCallContent = () => {
     const { appointmentId } = useParams();
     const navigate = useNavigate();
-    const { user } = useContext(AppContext);
+    const { userData, token } = useContext(AppContext);
     const hmsActions = useHMSActions();
     const isConnected = useHMSStore(selectIsConnectedToRoom);
     const peers = useHMSStore(selectPeers);
     const localPeer = useHMSStore(selectLocalPeer);
 
     const [loading, setLoading] = useState(true);
+    const [fallbackRoom, setFallbackRoom] = useState(false);
 
     const joinRoom = async () => {
         try {
-            const roomId = import.meta.env.VITE_HMS_ROOM_ID || "68300f05a5ba8326e6eb11a8";
-
-            // 1. Get token from backend
-            const { data } = await axios.post(`${backendUrl}/api/100ms/generate-token`, {
-                room_id: roomId,
-                user_id: user?._id || `user-${Date.now()}`,
-                role: "broadcaster" // Use broadcaster for both for a 1-1 call simplicity
-            });
-
-            if (data.token) {
-                // 2. Join room
-                await hmsActions.join({
-                    userName: user?.name || "Patient",
-                    authToken: data.token,
-                });
-                setLoading(false);
-            } else {
-                toast.error("Failed to get video call token");
+            if (!appointmentId) {
+                toast.error("Missing appointment id");
+                navigate(-1);
+                return;
             }
+
+            const { data } = await axios.post(
+                `${backendUrl}/api/100ms/appointment-token`,
+                { appointmentId },
+                { headers: { token } }
+            );
+
+            if (!data?.success || !data.token) {
+                toast.error(data?.message || "Failed to get video call token");
+                navigate(-1);
+                return;
+            }
+
+            setFallbackRoom(Boolean(data.fallback));
+
+            await hmsActions.join({
+                userName: userData?.name || "Patient",
+                authToken: data.token,
+            });
+            setLoading(false);
         } catch (err) {
             console.error("Video Call Error:", err);
-            toast.error("Error joining video call");
+            toast.error(err.response?.data?.message || "Error joining video call");
             navigate(-1);
         }
     };
@@ -59,7 +66,8 @@ const VideoCallContent = () => {
         return () => {
             hmsActions.leave();
         };
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [appointmentId]);
 
     const handleLeave = async () => {
         await hmsActions.leave();
@@ -77,6 +85,11 @@ const VideoCallContent = () => {
 
     return (
         <div className="bg-slate-950 min-h-[85vh] rounded-[2rem] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col relative text-white border border-white/5">
+            {fallbackRoom && (
+                <div className="absolute top-0 inset-x-0 z-30 bg-amber-500/90 text-black text-xs font-semibold text-center py-1.5 tracking-wide">
+                    ⚠️ Shared demo room — per-appointment rooms are not configured on this deployment
+                </div>
+            )}
             {/* Header - More Minimal */}
             <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-20 pointer-events-none">
                 <div className="flex items-center gap-3 bg-black/40 backdrop-blur-xl px-4 py-2 rounded-2xl border border-white/10 pointer-events-auto">

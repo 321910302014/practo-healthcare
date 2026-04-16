@@ -23,6 +23,8 @@ const appointmentSchema = new mongoose.Schema({
   payment: { type: Boolean, default: false },
   isCompleted: { type: Boolean, default: false },
 
+  hmsRoomId: { type: String },
+
   insurance: { type: Object }
 });
 

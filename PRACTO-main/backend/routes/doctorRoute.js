@@ -4,7 +4,6 @@ import {
   appointmentsDoctor,
   appointmentCancel,
   doctorList,
-  addDoctor,
   changeAvailablity,
   appointmentComplete,
   doctorDashboard,
@@ -27,39 +26,40 @@ doctorRouter.get("/dashboard", authDoctor, doctorDashboard);
 doctorRouter.get("/profile", authDoctor, doctorProfile);
 doctorRouter.post("/update-profile", authDoctor, updateDoctorProfile);
 doctorRouter.post("/match", matchDoctors);
-doctorRouter.post("/add", addDoctor);
 
-// Seed sample doctors (only use in development/test)
-doctorRouter.post("/seed", async (req, res) => {
-  const sampleDoctors = [
-    {
-      name: "Dr. Alice Smith",
-      specialization: "Cardiologist",
-      hospital: "City Heart Hospital",
-      address: { location: { type: "Point", coordinates: [77.5946, 12.9716] } },
-      languages: ["English"]
-    },
-    {
-      name: "Dr. Raj Patel",
-      specialization: "Dermatologist",
-      hospital: "Skin Health Clinic",
-      address: { location: { type: "Point", coordinates: [77.6000, 12.9800] } },
-      languages: ["Hindi"]
-    },
-    {
-      name: "Dr. Maria Gomez",
-      specialization: "Pediatrician",
-      hospital: "Happy Kids Hospital",
-      address: { location: { type: "Point", coordinates: [77.6100, 12.9600] } },
-      languages: ["Spanish"]
-    }
-  ];
+// Seed sample doctors (dev only — guarded by NODE_ENV)
+if (process.env.NODE_ENV !== "production") {
+  doctorRouter.post("/seed", async (req, res) => {
+    const sampleDoctors = [
+      {
+        name: "Dr. Alice Smith",
+        specialization: "Cardiologist",
+        hospital: "City Heart Hospital",
+        address: { location: { type: "Point", coordinates: [77.5946, 12.9716] } },
+        languages: ["English"]
+      },
+      {
+        name: "Dr. Raj Patel",
+        specialization: "Dermatologist",
+        hospital: "Skin Health Clinic",
+        address: { location: { type: "Point", coordinates: [77.6000, 12.9800] } },
+        languages: ["Hindi"]
+      },
+      {
+        name: "Dr. Maria Gomez",
+        specialization: "Pediatrician",
+        hospital: "Happy Kids Hospital",
+        address: { location: { type: "Point", coordinates: [77.6100, 12.9600] } },
+        languages: ["Spanish"]
+      }
+    ];
 
-  await Doctor.deleteMany({});
-  await Doctor.insertMany(sampleDoctors);
+    await Doctor.deleteMany({});
+    await Doctor.insertMany(sampleDoctors);
 
-  res.json({ message: "Sample doctors seeded successfully." });
-});
+    res.json({ message: "Sample doctors seeded successfully." });
+  });
+}
 
 // Get doctors by language
 doctorRouter.get("/by-language", async (req, res) => {

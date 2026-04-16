@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { DoctorContext } from '../../context/DoctorContext'
 import { AppContext } from '../../context/AppContext'
 import { assets } from '../../assets/assets'
@@ -9,6 +10,7 @@ const DoctorAppointments = () => {
   const { dToken, appointments, getAppointments, cancelAppointment, completeAppointment, uploadReport } = useContext(DoctorContext)
   const { slotDateFormat, calculateAge, currency } = useContext(AppContext)
   const [openChatId, setOpenChatId] = useState(null)
+  const navigate = useNavigate()
 
   const handleUploadReport = async (item, file) => {
     if (!file) return
@@ -89,6 +91,14 @@ const DoctorAppointments = () => {
                     >
                       {openChatId === item._id ? 'Close' : 'Chat'}
                     </button>
+                    {item.videoConsultation && item.payment && (
+                      <button
+                        onClick={() => navigate(`/video-call/${item._id}`)}
+                        className="px-2 py-1 bg-green-600 text-white text-[10px] rounded"
+                      >
+                        Join Video
+                      </button>
+                    )}
                   </div>
               }
             </div>

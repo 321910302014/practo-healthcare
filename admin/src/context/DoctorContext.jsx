@@ -62,6 +62,8 @@ const DoctorContextProvider = (props) => {
   // Function to cancel doctor appointment using API
   const cancelAppointment = async (appointmentId) => {
 
+    if (!window.confirm('Are you sure you want to cancel this appointment?')) return
+
     try {
 
       const { data } = await axios.post(

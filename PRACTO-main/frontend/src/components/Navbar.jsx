@@ -9,19 +9,17 @@ import { AppContext } from '../context/AppContext';
 const Navbar = () => {
   const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false)
-  const { token, setToken, userData } = useContext(AppContext)
+  const { token, setToken, userData, setUserData } = useContext(AppContext)
   //const { setLoading } = useLoading();
 
 
   // const { darkMode, setDarkMode } = useContext(ThemeContext)
 
-  const logout = async () => {
-    //setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  const logout = () => {
     localStorage.removeItem('token');
-    setToken(false);
-    //setLoading(false);
-    document.location.href = '/';
+    setToken('');
+    setUserData(false);
+    navigate('/');
   }
 
   return (

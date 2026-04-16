@@ -87,6 +87,9 @@ History: ${patientData.history?.join(", ") ?? "none"}
 Allergies: ${patientData.allergies?.join(", ") ?? "none"}
 `;
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -99,9 +102,11 @@ Allergies: ${patientData.allergies?.join(", ") ?? "none"}
         messages: [{ role: "system", content: prompt }],
         temperature: 0,
       }),
+      signal: controller.signal,
     });
 
     const data = await response.json();
+    clearTimeout(timeout);
     if (!data.choices || !data.choices[0]?.message?.content) {
       throw new Error("No response from AI model");
     }
@@ -125,7 +130,8 @@ Allergies: ${patientData.allergies?.join(", ") ?? "none"}
 
     return result;
   } catch (error) {
-    console.error("AI validation failed:", error.message);
+    clearTimeout(timeout);
+    console.error("AI validation failed:", error.name === 'AbortError' ? 'timeout' : error.message);
     return {
       status: "warning",
       issues: ["AI validation failed. Please review prescription manually."],

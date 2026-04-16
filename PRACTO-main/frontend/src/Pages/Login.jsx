@@ -280,12 +280,14 @@ import axios from 'axios'
 import { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
 import { AppContext } from '../context/AppContext'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export const Login = () => {
 
   const { backendUrl, setToken } = useContext(AppContext)
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirectTo = location.state?.from || '/'
 
   const [isLogin, setIsLogin] = useState(true)
 
@@ -313,7 +315,7 @@ export const Login = () => {
 
           toast.success("Login Successful")
 
-          navigate("/", { replace: true })
+          navigate(redirectTo, { replace: true })
 
         } else {
           toast.error(data.message)
@@ -327,12 +329,11 @@ export const Login = () => {
           { name, email, password }
         )
 
-        if (data.success) {
-
+        if (data.success && data.token) {
+          localStorage.setItem("token", data.token)
+          setToken(data.token)
           toast.success("Account created successfully")
-
-          setIsLogin(true) // switch to login form
-
+          navigate(redirectTo, { replace: true })
         } else {
           toast.error(data.message)
         }

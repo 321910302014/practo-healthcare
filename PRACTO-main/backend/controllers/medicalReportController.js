@@ -66,21 +66,18 @@ export const uploadMedicalReport = async (req, res) => {
 
     await report.save();
 
-    // ✅ Email notification (Optional, shouldn't crash upload)
-    try {
-      const user = await userModel.findById(userId);
-      if (user?.email) {
+    // Email notification runs in the background so the response returns immediately
+    // (PDF generation + Gmail SMTP can add many seconds of latency otherwise).
+    (async () => {
+      try {
+        const user = await userModel.findById(userId);
+        if (!user?.email) return;
+
         const subject = '📄 New Medical Report Uploaded';
         const message = `Hi ${user.name || 'User'},\n\nYour new report "${file.originalname}" has been uploaded. \n\nYou can view it in your account under "My Reports".\n\nThank you,\nPrescripta HealthCare`;
 
-        let attachments = [
-          {
-            path: result.secure_url,
-            filename: file.originalname
-          }
-        ];
+        const attachments = [{ path: result.secure_url, filename: file.originalname }];
 
-        // Try adding AI-generated PDF if possible
         try {
           const htmlContent = getReportHTML(user, report, parsedChartData, parsedChartImages);
           const pdfBuffer = await generateReportPDF(htmlContent);
@@ -94,10 +91,10 @@ export const uploadMedicalReport = async (req, res) => {
 
         await sendEmail(user.email, subject, message, attachments);
         console.log(`📧 Report email sent to ${user.email}`);
+      } catch (emailErr) {
+        console.error("⚠️ Report email notification failed (non-blocking):", emailErr.message);
       }
-    } catch (emailErr) {
-      console.error("⚠️ Email notification failed:", emailErr.message);
-    }
+    })();
 
     res.status(201).json({ success: true, message: "Report uploaded", report });
 

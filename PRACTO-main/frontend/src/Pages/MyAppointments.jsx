@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
+import { assets } from '../assets/assets'
 import { toast } from 'react-toastify'
 
 const MyAppointments = () => {
 
   const { backendUrl, token, getDoctorsData } = useContext(AppContext)
+  const navigate = useNavigate()
 
   const [appointments, setAppointments] = useState([])
 
@@ -30,6 +33,7 @@ const MyAppointments = () => {
   }
 
   const cancelAppointment = async (appointmentId) => {
+    if (!window.confirm('Are you sure you want to cancel this appointment?')) return
     try {
 
       const { data } = await axios.post(
@@ -150,6 +154,15 @@ const MyAppointments = () => {
                           className='text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 px-4 py-1.5 rounded-md text-xs font-semibold transition-all duration-300'
                         >
                           Pay Online
+                        </button>
+                      )}
+
+                      {!item.cancelled && !item.isCompleted && item.videoConsultation && (
+                        <button
+                          onClick={() => navigate(`/video-call/${item._id}`)}
+                          className='text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-1.5 rounded-md text-xs font-semibold transition-all duration-300'
+                        >
+                          Join Video Call
                         </button>
                       )}
 

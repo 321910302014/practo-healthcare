@@ -17,7 +17,9 @@ import Appointment from './Pages/Appointment';
 import MyReports from './Pages/MyReports';
 import SymptomChecker from './Pages/SymptomChecker';
 import VideoCall from './Pages/VideoCall';
+import Verify from './Pages/Verify';
 import Footer from './components/Footer';
+import RequireAuth from './components/RequireAuth';
 
 const App = () => {
   return (
@@ -30,12 +32,13 @@ const App = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />
-        <Route path='/my-profile' element={<MyProfile />} />
-        <Route path='/my-appointments' element={<MyAppointments />} />
-        <Route path='/my-reports' element={<MyReports />} />
+        <Route path='/my-profile' element={<RequireAuth><MyProfile /></RequireAuth>} />
+        <Route path='/my-appointments' element={<RequireAuth><MyAppointments /></RequireAuth>} />
+        <Route path='/my-reports' element={<RequireAuth><MyReports /></RequireAuth>} />
         <Route path='/symptom-checker' element={<SymptomChecker />} />
-        <Route path='/video-call/:appointmentId' element={<VideoCall />} />
+        <Route path='/video-call/:appointmentId' element={<RequireAuth><VideoCall /></RequireAuth>} />
         <Route path='/appointment/:docId' element={<Appointment />} />
+        <Route path='/verify' element={<RequireAuth><Verify /></RequireAuth>} />
       </Routes>
       <Footer />
       <ToastContainer position="top-right" autoClose={3000} />

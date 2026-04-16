@@ -72,6 +72,7 @@ const AdminContextProvider = (props) => {
 
   // Cancel appointment
   const cancelAppointment = async (appointmentId) => {
+    if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
     try {
       const { data } = await axios.post(
         backendUrl + "/api/admin/cancel-appointment",

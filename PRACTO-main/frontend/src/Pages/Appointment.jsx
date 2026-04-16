@@ -110,7 +110,7 @@ const Appointment = () => {
 
       let timeSlots = [];
       while (currentDate < endTime) {
-        let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        let formattedTime = currentDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
         let day = currentDate.getDate();
         let month = currentDate.getMonth() + 1;
@@ -152,7 +152,7 @@ const Appointment = () => {
           const found = data.appointments.filter(
             (apt) => apt.docId === docId && !apt.cancelled
           );
-          if (found) {
+          if (found.length > 0) {
             setAppointmentId(found[0]._id);
           }
         }
@@ -167,7 +167,7 @@ const Appointment = () => {
   const bookAppointment = async () => {
     if (!token) {
       toast.warn('Please login to book an appointment');
-      return navigate('/login');
+      return navigate('/login', { state: { from: `/appointment/${docId}` } });
     }
 
     if (!selectedSlot) {
@@ -278,12 +278,6 @@ const Appointment = () => {
                 </p>
               )}
             </div>
-            <button
-              onClick={() => { const id = Date.now().toString(); navigate(`/video-call/${id}`); }}
-              className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg shadow-indigo-100"
-            >
-              📹 Instant Video Consultation
-            </button>
           </div>
         </div>
       </div>
@@ -292,15 +286,20 @@ const Appointment = () => {
       <div className="mt-8">
         <h3 className="text-2xl font-bold text-gray-700 mb-4">Available Slots</h3>
         <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
-          {[...Array(docSlots.length)].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setSlotIndex(i)}
-              className={`px-4 py-2 rounded-md border flex-shrink-0 ${slotIndex === i ? 'border-blue-600 bg-blue-100' : 'border-gray-300'}`}
-            >
-              {daysOfWeek[(new Date().getDay() + i) % 7]}
-            </button>
-          ))}
+          {[...Array(docSlots.length)].map((_, i) => {
+            const dayDate = new Date();
+            dayDate.setDate(dayDate.getDate() + i);
+            return (
+              <button
+                key={i}
+                onClick={() => setSlotIndex(i)}
+                className={`px-4 py-2 rounded-md border flex-shrink-0 flex flex-col items-center ${slotIndex === i ? 'border-blue-600 bg-blue-100' : 'border-gray-300'}`}
+              >
+                <span className='text-xs font-medium'>{daysOfWeek[dayDate.getDay()]}</span>
+                <span className='text-sm font-semibold'>{dayDate.getDate()}</span>
+              </button>
+            );
+          })}
         </div>
         <div className="max-h-80 overflow-y-auto pr-2">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -393,20 +392,28 @@ const Appointment = () => {
               You’ve chosen to pay at the clinic.
             </p>
             <button
-              disabled={loading}
+              disabled={loading || !selectedSlot}
               onClick={bookAppointment}
-              className="w-full p-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors"
+              className="w-full p-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors disabled:bg-green-300 disabled:cursor-not-allowed"
             >
-              {loading ? 'Booking...' : 'Confirm Appointment (Pay at Clinic)'}
+              {loading
+                ? 'Booking...'
+                : !selectedSlot
+                  ? 'Select a time slot to continue'
+                  : 'Confirm Appointment (Pay at Clinic)'}
             </button>
           </div>
         ) : (
           <button
-            disabled={loading}
+            disabled={loading || !selectedSlot}
             onClick={bookAppointment}
-            className="w-full p-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors"
+            className="w-full p-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
-            {loading ? 'Booking...' : `Book Appointment${finalFee !== null ? ` - ${currencySymbol}${finalFee.toFixed(2)}` : ''}`}
+            {loading
+              ? 'Booking...'
+              : !selectedSlot
+                ? 'Select a time slot to continue'
+                : `Book Appointment${finalFee !== null ? ` - ${currencySymbol}${finalFee.toFixed(2)}` : ''}`}
           </button>
         )}
       </div>

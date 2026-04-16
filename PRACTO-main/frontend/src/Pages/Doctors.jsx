@@ -11,8 +11,8 @@ const Doctors = () => {
   const { speciality } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, token, getDoctorsData } = useContext(AppContext);
-  const userInsurance = user?.insuranceProvider || '';
+  const { userData, token, getDoctorsData } = useContext(AppContext);
+  const userInsurance = userData?.insuranceProvider || '';
 
   const [doctors, setDoctors] = useState([]);
   const [filterDoc, setFilterDoc] = useState([]);
@@ -73,7 +73,7 @@ const Doctors = () => {
   const handleRate = async (doctorId, newRating) => {
     if (!token) {
       toast.warn("Please log in to rate doctors");
-      return navigate('/login');
+      return navigate('/login', { state: { from: location.pathname } });
     }
 
     try {
@@ -256,12 +256,6 @@ const Doctors = () => {
                 <div className='flex flex-col gap-3 mt-6 pt-6 border-t border-gray-50'>
                   <button className="w-full py-2.5 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg shadow-gray-200">
                     Book Appointment
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); const appointmentId = Date.now().toString(); navigate(`/video-call/${appointmentId}`); }}
-                    className="w-full py-2.5 border-2 border-primary/20 text-primary text-sm font-bold rounded-xl hover:bg-primary/5 transition-all"
-                  >
-                    Video Consultation
                   </button>
                 </div>
               </div>

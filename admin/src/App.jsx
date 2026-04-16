@@ -15,6 +15,7 @@ import AllAppointments from "./pages/Admin/AllAppointments";
 import AddDoctor from "./pages/Admin/AddDoctor";
 import DoctorsList from "./pages/Admin/DoctorsList";
 import Login from './pages/Login';
+import VideoCall from './pages/VideoCall';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -45,12 +46,10 @@ const { dToken } = useContext(DoctorContext);
             <Route path='/all-appointments' element={<AllAppointments />} />
             <Route path='/add-doctor' element={<AddDoctor />} />
             <Route path='/doctor-list' element={<DoctorsList />} />
-
-<Route path="/admin-dashboard" element={<Dashboard />} />
-<Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-          <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
-          <Route path='/doctor-appointments' element={<DoctorAppointments />} />
-          <Route path='/doctor-profile' element={<DoctorProfile />} />
+            <Route path='/doctor-dashboard' element={<DoctorDashboard />} />
+            <Route path='/doctor-appointments' element={<DoctorAppointments />} />
+            <Route path='/doctor-profile' element={<DoctorProfile />} />
+            <Route path='/video-call/:appointmentId' element={<VideoCall />} />
           </Routes>
         </div>
 
