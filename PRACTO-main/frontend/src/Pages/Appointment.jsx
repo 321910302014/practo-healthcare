@@ -50,9 +50,11 @@ const Appointment = () => {
   const [payInClinic, setPayInClinic] = useState(false);
   const [isVideoConsultation, setIsVideoConsultation] = useState(false);
 
-  // Scroll to top when page loads
+  // Scroll to top + refresh doctor list (so slots_booked is current) when page loads
   useEffect(() => {
     window.scrollTo(0, 0);
+    getDoctorsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docId]);
 
   useEffect(() => {
@@ -224,6 +226,12 @@ const Appointment = () => {
             daySlots.filter(s => s.datetime.getTime() !== date.getTime())
           )
         );
+
+        // ✅ Sync shared context so other pages/tabs see the booked slot
+        getDoctorsData();
+
+        // Clear selection so the confirmed slot isn't shown as "selected" anymore
+        setSelectedSlot(null);
       } else {
         toast.error(data.message || 'Failed to book appointment');
       }
@@ -418,10 +426,10 @@ const Appointment = () => {
         )}
       </div>
 
-      {appointmentId && (
+      {appointmentId && userData?._id && (
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-2">Chat with Doctor</h2>
-          <PatientChat appointmentId={appointmentId} userId={userData?._id} />
+          <PatientChat appointmentId={appointmentId} userId={userData._id} />
         </div>
       )}
 

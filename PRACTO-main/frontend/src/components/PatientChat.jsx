@@ -13,6 +13,7 @@ const PatientChat = ({ appointmentId, userId }) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     const fetchMessages = async () => {
+        if (!appointmentId) return;
         try {
             const { data } = await axios.get(`${backendUrl}/api/chat/${appointmentId}`);
             if (data.success) {
@@ -25,25 +26,33 @@ const PatientChat = ({ appointmentId, userId }) => {
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!newMessage.trim()) return;
+        const trimmed = newMessage.trim();
+        if (!trimmed || loading) return;
+        if (!userId) {
+            toast.error("Please wait — still loading your profile.");
+            return;
+        }
 
         setLoading(true);
+        const messageToSend = trimmed;
+        setNewMessage('');
         try {
             const { data } = await axios.post(`${backendUrl}/api/chat/send`, {
                 appointmentId,
                 senderType: 'patient',
                 senderId: userId,
-                message: newMessage
+                message: messageToSend
             });
 
             if (data.success) {
-                setNewMessage('');
                 fetchMessages();
             } else {
-                toast.error(data.message);
+                setNewMessage(messageToSend);
+                toast.error(data.message || 'Failed to send message');
             }
         } catch (error) {
-            toast.error("Failed to send message");
+            setNewMessage(messageToSend);
+            toast.error(error.response?.data?.message || "Failed to send message");
         } finally {
             setLoading(false);
         }
@@ -51,6 +60,7 @@ const PatientChat = ({ appointmentId, userId }) => {
 
     // Poll for new messages every 3 seconds
     useEffect(() => {
+        if (!appointmentId) return;
         fetchMessages().then(() => {
             setIsInitialLoad(false);
         });
@@ -90,7 +100,7 @@ const PatientChat = ({ appointmentId, userId }) => {
                 ) : (
                     messages.map((msg, index) => (
                         <div
-                            key={index}
+                            key={msg._id || index}
                             className={`flex ${msg.senderType === 'patient' ? 'justify-end' : 'justify-start'}`}
                         >
                             <div className={`max-w-[85%] p-4 rounded-3xl shadow-sm ${msg.senderType === 'patient'

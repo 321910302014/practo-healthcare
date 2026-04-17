@@ -7,7 +7,7 @@ const SpecialityMenu = () => {
         <div id='speciality' className='flex flex-col items-center gap-4 py-16 text-[#262626]'>
             <h1 className='text-3xl font-medium'>Find by Speciality</h1>
             <p className='text-sm text-center sm:w-1/3'>Simply browse through our extensive list of trusted doctors, schedule your appointment hassle-free.</p>
-            <div className='flex w-full gap-4 pt-5 overflow-scroll sm:justify-center '>
+            <div className='flex w-full gap-4 pt-5 overflow-x-auto overflow-y-hidden sm:justify-center'>
                 {specialityData.map((item, index) => (
                     <Link to={`/doctors/${item.speciality}`} onClick={() => scrollTo(0, 0)} className='flex flex-col items-center text-xs cursor-pointer flex-shrink-0 hover:translate-y-[-10px] transition-all duration-500' key={index}>
                         <img className='w-16 mb-2 sm:w-24 ' src={item.image} alt="" />
