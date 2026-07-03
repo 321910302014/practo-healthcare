@@ -1,0 +1,14 @@
+# Dependencies (regenerable — excluded to keep the repo lean)
+node_modules/
+
+# Build output
+dist/
+
+# OS / editor cruft
+.DS_Store
+
+# Claude Code local config
+.claude/
+
+# NOTE: .env files are intentionally COMMITTED per the project owner's request.
+# These contain live credentials — rotate them if this repo ever becomes public.
