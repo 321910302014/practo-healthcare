@@ -1,281 +1,3 @@
-// import axios from 'axios';
-// import { useContext, useState } from 'react';
-// import { Link, useNavigate } from 'react-router-dom';
-// import { toast } from 'react-toastify';
-// import { AppContext } from '../context/AppContext';
-// //import { useLoading } from '../context/LoadingContext';
-
-// export const Login = () => {
-// 	const navigate = useNavigate()
-// 	const { backendUrl, setToken, loadUserProfileData } = useContext(AppContext);
-// 	const [email, setEmail] = useState('');
-// 	const [password, setPassword] = useState('');
-// 	//const { setLoading } = useLoading();
-// 	const [showHomeModal, setShowHomeModal] = useState(false);
-
-// 		// const onSubmitHandler = async (event) => {
-// 		// 	event.preventDefault();
-// 		// 		//setLoading(true);
-// 		// 		const minLoadingPromise = new Promise(resolve => setTimeout(resolve, 1000));
-// 		// 		try {
-// 		// 			const loginPromise = axios.post(`${backendUrl}/api/user/login`, { email, password });
-// 		// 			const [, response] = await Promise.all([minLoadingPromise, loginPromise]);
-// 		// 			const { data } = response;
-// 					// if (data.success) {
-// 					// 	if (data.twoFactorRequired) {
-// 					// 		localStorage.setItem("2fa_email", email);
-// 					// 		navigate('/');
-// 					// 	} else {
-// 					// 		localStorage.setItem('token', data.token);
-//           //     setToken(data.token);
-//           if (data.success) {
-// //     localStorage.setItem('token', data.token);
-// //     setToken(data.token);
-
-// //     // Fetch profile data
-// //     await loadUserProfileData();
-
-// //     // Redirect to home page
-// //     navigate('/');
-// // }
-// // else {
-// //     toast.error(data.message);
-// // }
-// const onSubmitHandler = async (event) => {
-//     event.preventDefault();
-
-//     try {
-//         const loginPromise = axios.post(
-//             `${backendUrl}/api/user/login`,
-//             { email, password }
-//         );
-
-//         const minLoadingPromise = new Promise(resolve => setTimeout(resolve, 1000));
-
-//         const [, response] = await Promise.all([
-//             minLoadingPromise,
-//             loginPromise
-//         ]);
-
-//         const { data } = response;
-
-//         if (data.success) {
-//             localStorage.setItem('token', data.token);
-//             setToken(data.token);
-
-//             // Load profile data after login
-//             if (typeof loadUserProfileData === "function") {
-//                 await loadUserProfileData();
-//             }
-
-//             navigate('/');
-//         } else {
-//             toast.error(data.message);
-//         }
-
-//     } catch (error) {
-//         console.error(error);
-//         toast.error("Login failed");
-//     }
-// };
-
-// // Fetch profile data after login
-// if (typeof loadUserProfileData === "function") {
-//     await loadUserProfileData();
-// }
-
-// //setShowHomeModal(true);
-// 						}
-// 					} else {
-// 						toast.error(data.message);
-// 					}
-// 				} catch (error) {
-// 					toast.error('Login failed');
-// 				} finally {
-// 					//setLoading(false);
-// 				}
-// 		}
-
-// 		return (
-// 			<>
-// 				<form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
-// 					<div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg'>
-// 						<p className='text-2xl font-semibold'>Login</p>
-// 						<p>Please log in to book appointment</p>
-
-// 							<>
-// 								<div className='w-full'>
-// 									<p>Email</p>
-// 									<input
-// 										onChange={(e) => setEmail(e.target.value)}
-// 										value={email}
-// 										className='border border-[#DADADA] rounded w-full p-2 mt-1'
-// 										type="email"
-// 										required
-// 									/>
-// 								</div>
-
-// 								<div className='w-full'>
-// 									<p>Password</p>
-// 									<input
-// 										onChange={(e) => setPassword(e.target.value)}
-// 										value={password}
-// 										className='border border-[#DADADA] rounded w-full p-2 mt-1'
-// 										type="password"
-// 										required
-// 									/> 
-// 										<p className="w-full mt-1 text-sm text-right text-blue-600">
-// 											<Link to="/forgot-password" className="hover:underline">Forgot Password?</Link>
-// 										</p>
-// 								</div>
-
-// 								<button type="submit" className='w-full py-2 my-2 text-base text-white rounded-md bg-primary'>
-// 									Login
-// 								</button>
-// 							</>
-
-// 							<p>
-// 								Create a new account?{' '}
-// 								<span onClick={() => navigate('/signup')} className='underline cursor-pointer text-primary'>Click here</span>
-// 							</p>
-// 					</div>
-// 				</form>
-// 				{showHomeModal && (
-// 					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-// 						<div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg">
-// 							<h2 className="mb-2 text-lg font-semibold">Login Successful</h2>
-// 							<p className="mb-4 text-center">You have successfully logged in. Would you like to go to the home page now?</p>
-// 							<div className="flex gap-4">
-// 								<button
-// 									className="px-4 py-2 text-white rounded bg-primary hover:bg-blue-700"
-// 									onClick={() => { setShowHomeModal(false); navigate('/'); }}
-// 								>
-// 									Go to Home
-// 								</button>
-// 								<button
-// 									className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-// 									onClick={() => { setShowHomeModal(false); navigate('/setup-2fa'); }}
-// 								>
-// 									Enable Google 2FA
-// 								</button>
-// 							</div>
-// 						</div>
-// 					</div>
-// 				)}
-// 			</>
-// 		)
-// }
-
-// export default Login;
-// import axios from 'axios';
-// import { useContext, useState } from 'react';
-// import { Link, useNavigate } from 'react-router-dom';
-// import { toast } from 'react-toastify';
-// import { AppContext } from '../context/AppContext';
-
-// export const Login = () => {
-
-//     const navigate = useNavigate();
-//     const { backendUrl, setToken, loadUserProfileData } = useContext(AppContext);
-
-//     const [email, setEmail] = useState('');
-//     const [password, setPassword] = useState('');
-
-//     const onSubmitHandler = async (event) => {
-//         event.preventDefault();
-
-//         try {
-//             const loginPromise = axios.post(
-//                 `${backendUrl}/api/user/login`,
-//                 { email, password }
-//             );
-
-//             const minLoadingPromise = new Promise(resolve => setTimeout(resolve, 1000));
-
-//             const [, response] = await Promise.all([
-//                 minLoadingPromise,
-//                 loginPromise
-//             ]);
-
-//             const { data } = response;
-
-//             if (data.success) {
-
-//                 localStorage.setItem("token", data.token);
-//                 setToken(data.token);
-
-//                 if (typeof loadUserProfileData === "function") {
-//                     await loadUserProfileData();
-//                 }
-
-//                 navigate("/");
-
-//             } else {
-//                 toast.error(data.message);
-//             }
-
-//         } catch (error) {
-//             console.error(error);
-//             toast.error("Login failed");
-//         }
-//     };
-
-//     return (
-//         <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
-//             <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] border rounded-xl shadow-lg'>
-
-//                 <p className='text-2xl font-semibold'>Login</p>
-//                 <p>Please log in to book appointment</p>
-
-//                 <div className='w-full'>
-//                     <p>Email</p>
-//                     <input
-//                         onChange={(e) => setEmail(e.target.value)}
-//                         value={email}
-//                         className='border rounded w-full p-2 mt-1'
-//                         type="email"
-//                         required
-//                     />
-//                 </div>
-
-//                 <div className='w-full'>
-//                     <p>Password</p>
-//                     <input
-//                         onChange={(e) => setPassword(e.target.value)}
-//                         value={password}
-//                         className='border rounded w-full p-2 mt-1'
-//                         type="password"
-//                         required
-//                     />
-//                 </div>
-
-//                 <p className="w-full mt-1 text-sm text-right text-blue-600">
-//                     <Link to="/forgot-password" className="hover:underline">
-//                         Forgot Password?
-//                     </Link>
-//                 </p>
-
-//                 <button type="submit" className='w-full py-2 my-2 text-white rounded bg-primary'>
-//                     Login
-//                 </button>
-
-//                 <p>
-//                     Create a new account?{' '}
-//                     <span
-//                         onClick={() => navigate('/signup')}
-//                         className='underline cursor-pointer text-primary'
-//                     >
-//                         Click here
-//                     </span>
-//                 </p>
-
-//             </div>
-//         </form>
-//     );
-// };
-
-// export default Login;
-
 import axios from 'axios'
 import { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -287,131 +9,244 @@ export const Login = () => {
   const { backendUrl, setToken } = useContext(AppContext)
   const navigate = useNavigate()
 
-  const [isLogin, setIsLogin] = useState(true)
+  // 'login' | 'signup' | 'otp'
+  const [mode, setMode] = useState('login')
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [otp, setOtp] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  // ---- LOGIN ----
+  const handleLogin = async () => {
+    const { data } = await axios.post(`${backendUrl}/api/user/login`, { email, password })
+
+    if (data.success) {
+      localStorage.setItem('token', data.token)
+      setToken(data.token)
+      toast.success('Login Successful')
+      navigate('/', { replace: true })
+      return
+    }
+
+    // Account exists but email isn't verified yet -> send a fresh OTP and go to verify step
+    if (data.message && data.message.toLowerCase().includes('verif')) {
+      toast.info('Your email is not verified yet. We just sent you a new OTP.')
+      await sendFreshOtp()
+      setOtp('')
+      setMode('otp')
+      return
+    }
+
+    toast.error(data.message)
+  }
+
+  // ---- SIGNUP ----
+  const handleSignup = async () => {
+    const { data } = await axios.post(`${backendUrl}/api/user/register`, { name, email, password })
+
+    if (data.success) {
+      toast.success('OTP sent to your email. Enter it below to verify your account.')
+      setOtp('')
+      setMode('otp')
+    } else {
+      toast.error(data.message)
+    }
+  }
+
+  // ---- VERIFY OTP ----
+  const handleVerifyOtp = async () => {
+    if (!otp.trim()) {
+      toast.warning('Please enter the OTP from your email.')
+      return
+    }
+
+    const { data } = await axios.post(`${backendUrl}/api/user/verify-otp`, {
+      email,
+      otp: otp.trim(),
+    })
+
+    if (data.success) {
+      toast.success('Email verified! Please log in.')
+      setOtp('')
+      setPassword('')
+      setMode('login')
+    } else {
+      toast.error(data.message)
+    }
+  }
+
+  // ---- RESEND OTP ----
+  const sendFreshOtp = async () => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/user/send-otp`, { email })
+      if (!data.success) toast.error(data.message)
+      return data.success
+    } catch (e) {
+      console.log(e)
+      toast.error('Could not send OTP')
+      return false
+    }
+  }
+
+  const handleResendOtp = async () => {
+    setLoading(true)
+    const ok = await sendFreshOtp()
+    if (ok) toast.success('A new OTP has been sent to your email.')
+    setLoading(false)
+  }
 
   const onSubmitHandler = async (event) => {
     event.preventDefault()
-
+    setLoading(true)
     try {
-
-      if (isLogin) {
-
-        // LOGIN
-        const { data } = await axios.post(
-          `${backendUrl}/api/user/login`,
-          { email, password }
-        )
-
-        if (data.success) {
-
-          localStorage.setItem("token", data.token)
-          setToken(data.token)
-
-          toast.success("Login Successful")
-
-          navigate("/", { replace: true })
-
-        } else {
-          toast.error(data.message)
-        }
-
-      } else {
-
-        // SIGNUP
-        const { data } = await axios.post(
-          `${backendUrl}/api/user/register`,
-          { name, email, password }
-        )
-
-        if (data.success) {
-
-          toast.success("Account created successfully")
-
-          setIsLogin(true) // switch to login form
-
-        } else {
-          toast.error(data.message)
-        }
-
-      }
-
+      if (mode === 'login') await handleLogin()
+      else if (mode === 'signup') await handleSignup()
+      else if (mode === 'otp') await handleVerifyOtp()
     } catch (error) {
       console.log(error)
-      toast.error("Something went wrong")
+      toast.error('Something went wrong')
+    } finally {
+      setLoading(false)
     }
   }
+
+  const title = mode === 'login' ? 'Login' : mode === 'signup' ? 'Create Account' : 'Verify Your Email'
+  const submitLabel = mode === 'login' ? 'Login' : mode === 'signup' ? 'Create Account' : 'Verify & Continue'
 
   return (
     <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
 
-      <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] border rounded-xl shadow-lg'>
+      <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl shadow-lg'>
 
-        <p className='text-2xl font-semibold'>
-          {isLogin ? "Login" : "Create Account"}
-        </p>
+        <p className='text-2xl font-semibold'>{title}</p>
 
         <p>
-          {isLogin
-            ? "Please log in to book appointment"
-            : "Create a new account"}
+          {mode === 'login' && 'Please log in to book appointment'}
+          {mode === 'signup' && 'Create a new account'}
+          {mode === 'otp' && (
+            <>We sent a 6-digit code to <span className='font-medium text-primary'>{email}</span>. Enter it below to activate your account.</>
+          )}
         </p>
 
-        {!isLogin && (
+        {/* Name — signup only */}
+        {mode === 'signup' && (
           <div className='w-full'>
             <p>Name</p>
             <input
               onChange={(e) => setName(e.target.value)}
               value={name}
               className='border rounded w-full p-2 mt-1'
-              type="text"
+              type='text'
               required
             />
           </div>
         )}
 
-        <div className='w-full'>
-          <p>Email</p>
-          <input
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            className='border rounded w-full p-2 mt-1'
-            type="email"
-            required
-          />
-        </div>
+        {/* Email + Password — login & signup */}
+        {mode !== 'otp' && (
+          <>
+            <div className='w-full'>
+              <p>Email</p>
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                className='border rounded w-full p-2 mt-1'
+                type='email'
+                required
+              />
+            </div>
 
-        <div className='w-full'>
-          <p>Password</p>
-          <input
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            className='border rounded w-full p-2 mt-1'
-            type="password"
-            required
-          />
-        </div>
+            <div className='w-full'>
+              <p>Password</p>
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                className='border rounded w-full p-2 mt-1'
+                type='password'
+                required
+              />
+            </div>
+          </>
+        )}
+
+        {/* OTP entry — otp step only */}
+        {mode === 'otp' && (
+          <div className='w-full'>
+            <p>Enter OTP</p>
+            <input
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+              value={otp}
+              className='border rounded w-full p-2 mt-1 tracking-[0.5em] text-center text-lg'
+              type='text'
+              inputMode='numeric'
+              maxLength={6}
+              placeholder='______'
+              autoFocus
+              required
+            />
+            <div className='flex items-center justify-between w-full mt-2 text-sm'>
+              <span
+                onClick={() => !loading && handleResendOtp()}
+                className='underline cursor-pointer text-primary'
+              >
+                Resend OTP
+              </span>
+              <span
+                onClick={() => { setMode('signup'); setOtp('') }}
+                className='underline cursor-pointer text-gray-500'
+              >
+                Change email
+              </span>
+            </div>
+          </div>
+        )}
 
         <button
-          type="submit"
-          className='w-full py-2 my-2 text-white rounded bg-primary'
+          type='submit'
+          disabled={loading}
+          className='w-full py-2 my-2 text-white rounded bg-primary disabled:opacity-60'
         >
-          {isLogin ? "Login" : "Create Account"}
+          {loading ? 'Please wait...' : submitLabel}
         </button>
 
-        <p>
-          {isLogin ? "Create a new account?" : "Already have an account?"}
+        {/* Footer toggle */}
+        {mode === 'login' && (
+          <p>
+            Create a new account?
+            <span
+              onClick={() => { setMode('signup'); setPassword('') }}
+              className='ml-1 underline cursor-pointer text-primary'
+            >
+              Click here
+            </span>
+          </p>
+        )}
 
-          <span
-            onClick={() => setIsLogin(!isLogin)}
-            className='ml-1 underline cursor-pointer text-primary'
-          >
-            {isLogin ? "Click here" : "Login"}
-          </span>
-        </p>
+        {mode === 'signup' && (
+          <p>
+            Already have an account?
+            <span
+              onClick={() => setMode('login')}
+              className='ml-1 underline cursor-pointer text-primary'
+            >
+              Login
+            </span>
+          </p>
+        )}
+
+        {mode === 'otp' && (
+          <p>
+            Already verified?
+            <span
+              onClick={() => { setMode('login'); setOtp('') }}
+              className='ml-1 underline cursor-pointer text-primary'
+            >
+              Back to Login
+            </span>
+          </p>
+        )}
 
       </div>
     </form>

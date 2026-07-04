@@ -7,7 +7,7 @@ const PatientChat = ({ appointmentId, userId }) => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(false);
-    const scrollRef = useRef();
+    const messagesContainerRef = useRef(null);
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -55,9 +55,14 @@ const PatientChat = ({ appointmentId, userId }) => {
         return () => clearInterval(interval);
     }, [appointmentId]);
 
-    // Auto-scroll to bottom
+    // Auto-scroll the chat panel to the newest message.
+    // Scroll the container itself (not scrollIntoView, which would drag the
+    // whole page down to the chat when it first appears after booking).
     useEffect(() => {
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+        const el = messagesContainerRef.current;
+        if (el && messages.length > 0) {
+            el.scrollTop = el.scrollHeight;
+        }
     }, [messages]);
 
     return (
@@ -74,7 +79,7 @@ const PatientChat = ({ appointmentId, userId }) => {
             </div>
 
             {/* Message Area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
                 {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full opacity-20">
                         <MessageSquare size={48} className="mb-2" />
@@ -100,7 +105,6 @@ const PatientChat = ({ appointmentId, userId }) => {
                         </div>
                     ))
                 )}
-                <div ref={scrollRef} />
             </div>
 
             {/* Input Area */}

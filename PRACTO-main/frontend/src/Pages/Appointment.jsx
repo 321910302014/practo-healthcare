@@ -44,6 +44,9 @@ const Appointment = () => {
   const [userInsurances, setUserInsurances] = useState([]);
   const [hasInsurance, setHasInsurance] = useState(false);
   const [selectedInsuranceId, setSelectedInsuranceId] = useState('');
+  const [showAddInsurance, setShowAddInsurance] = useState(false);
+  const [savingIns, setSavingIns] = useState(false);
+  const [newIns, setNewIns] = useState({ provider: '', policyNumber: '', coverageDetails: '', validTill: '' });
   const [finalFee, setFinalFee] = useState(null);
   const [appointmentId, setAppointmentId] = useState(null);
 
@@ -60,17 +63,55 @@ const Appointment = () => {
     }
   }, [doctors, docId]);
 
+  // Pull the doctor's latest availability whenever this page opens, so any slot
+  // booked by another patient is reflected (and hidden) here — not just at app start.
   useEffect(() => {
-    if (token) {
-      axios.get(`${backendUrl}/api/insurance`, {
+    getDoctorsData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docId]);
+
+  const fetchInsurances = async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${backendUrl}/api/insurance`, {
         headers: { Authorization: `Bearer ${token}` }
-      }).then(res => {
-        if (Array.isArray(res.data)) setUserInsurances(res.data);
-      }).catch(err => {
-        console.error('Error fetching insurance:', err);
       });
+      // backend returns a raw array; tolerate a {data:[...]} envelope too
+      if (Array.isArray(res.data)) setUserInsurances(res.data);
+      else if (Array.isArray(res.data?.data)) setUserInsurances(res.data.data);
+    } catch (err) {
+      console.error('Error fetching insurance:', err);
     }
+  };
+
+  useEffect(() => {
+    fetchInsurances();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, backendUrl]);
+
+  const handleAddInsurance = async () => {
+    if (!newIns.provider.trim() || !newIns.policyNumber.trim() || !newIns.validTill) {
+      toast.error('Provider, policy number and valid-till date are required.');
+      return;
+    }
+    setSavingIns(true);
+    try {
+      const res = await axios.post(`${backendUrl}/api/insurance`, newIns, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const saved = res.data?._id ? res.data : (res.data?.data || null);
+      toast.success('Insurance added.');
+      await fetchInsurances();
+      if (saved?._id) setSelectedInsuranceId(saved._id);
+      setShowAddInsurance(false);
+      setNewIns({ provider: '', policyNumber: '', coverageDetails: '', validTill: '' });
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || 'Could not add insurance (policy number may already exist).');
+    } finally {
+      setSavingIns(false);
+    }
+  };
 
   useEffect(() => {
     const baseFee = docInfo?.fees ?? docInfo?.fee;
@@ -219,6 +260,11 @@ const Appointment = () => {
             daySlots.filter(s => s.datetime.getTime() !== date.getTime())
           )
         );
+
+        setSelectedSlot(null);
+
+        // Refresh shared doctor data so the booked slot is disabled for everyone.
+        getDoctorsData();
       } else {
         toast.error(data.message || 'Failed to book appointment');
       }
@@ -335,11 +381,81 @@ const Appointment = () => {
               <option value="">-- Select Insurance --</option>
               {userInsurances.map(ins => (
                 <option key={ins._id} value={ins._id}>
-                  {ins.insuranceProvider} ({ins.coverageDetails})
+                  {ins.provider}{ins.coverageDetails ? ` (${ins.coverageDetails})` : ''}
                 </option>
               ))}
             </select>
-            <p className="text-sm text-green-600 mt-1">✅ 90% discount will be applied</p>
+
+            {userInsurances.length === 0 && (
+              <p className="text-sm text-gray-500 mt-1">
+                You have no insurance saved yet — add one below to get the 90% discount.
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setShowAddInsurance(v => !v)}
+              className="text-sm text-primary underline mt-2"
+            >
+              {showAddInsurance ? 'Cancel' : '＋ Add new insurance'}
+            </button>
+
+            {showAddInsurance && (
+              <div className="mt-3 p-4 border border-gray-200 rounded-md bg-white grid gap-3">
+                <div>
+                  <label className="text-sm text-gray-600">Provider</label>
+                  <input
+                    list="insurance-providers"
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    value={newIns.provider}
+                    onChange={e => setNewIns({ ...newIns, provider: e.target.value })}
+                    placeholder="e.g. Aetna"
+                  />
+                  <datalist id="insurance-providers">
+                    {['Aetna', 'Blue Cross Blue Shield', 'Cigna', 'UnitedHealthcare', 'Humana', 'Kaiser Permanente', 'Star Health', 'HDFC ERGO', 'ICICI Lombard', 'Max Bupa'].map(p => (
+                      <option key={p} value={p} />
+                    ))}
+                  </datalist>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600">Policy Number</label>
+                  <input
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    value={newIns.policyNumber}
+                    onChange={e => setNewIns({ ...newIns, policyNumber: e.target.value })}
+                    placeholder="e.g. POL-12345"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600">Coverage Details (optional)</label>
+                  <input
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    value={newIns.coverageDetails}
+                    onChange={e => setNewIns({ ...newIns, coverageDetails: e.target.value })}
+                    placeholder="e.g. 90% outpatient"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600">Valid Till</label>
+                  <input
+                    type="date"
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    value={newIns.validTill}
+                    onChange={e => setNewIns({ ...newIns, validTill: e.target.value })}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddInsurance}
+                  disabled={savingIns}
+                  className="py-2 bg-primary text-white rounded disabled:opacity-60"
+                >
+                  {savingIns ? 'Saving...' : 'Save Insurance'}
+                </button>
+              </div>
+            )}
+
+            <p className="text-sm text-green-600 mt-2">✅ 90% discount will be applied</p>
           </>
         )}
 
