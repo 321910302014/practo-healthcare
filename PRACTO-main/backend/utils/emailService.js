@@ -17,26 +17,35 @@ const sendEmail = async (
   to,
   subject,
   text,
-  pdfBuffer = null,
+  pdfBufferOrAttachments = null, // legacy PDF buffer OR a ready nodemailer attachments array
   pdfFilename = null,
   extraAttachment = null // { buffer, filename }
 ) => {
-  const attachments = [];
+  let attachments = [];
 
-  if (pdfBuffer && pdfFilename) {
-    attachments.push({
-      filename: pdfFilename,
-      content: pdfBuffer,
-      contentType: 'application/pdf'
-    });
-  }
+  if (Array.isArray(pdfBufferOrAttachments)) {
+    // New style: caller passes a ready-made nodemailer attachments array,
+    // e.g. [{ path: <fileUrl>, filename }, { content: <pdfBuffer>, filename }].
+    attachments = pdfBufferOrAttachments;
+  } else {
+    // Legacy positional style: (pdfBuffer, pdfFilename, extraAttachment).
+    const pdfBuffer = pdfBufferOrAttachments;
 
-  if (extraAttachment?.buffer && extraAttachment?.filename) {
-    attachments.push({
-      filename: extraAttachment.filename,
-      content: extraAttachment.buffer,
-      contentType: 'application/octet-stream' // general file
-    });
+    if (pdfBuffer && pdfFilename) {
+      attachments.push({
+        filename: pdfFilename,
+        content: pdfBuffer,
+        contentType: 'application/pdf'
+      });
+    }
+
+    if (extraAttachment?.buffer && extraAttachment?.filename) {
+      attachments.push({
+        filename: extraAttachment.filename,
+        content: extraAttachment.buffer,
+        contentType: 'application/octet-stream' // general file
+      });
+    }
   }
 
   const mailOptions = {

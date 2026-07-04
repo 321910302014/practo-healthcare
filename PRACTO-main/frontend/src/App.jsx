@@ -17,6 +17,7 @@ import Appointment from './Pages/Appointment';
 import MyReports from './Pages/MyReports';
 import SymptomChecker from './Pages/SymptomChecker';
 import VideoCall from './Pages/VideoCall';
+import Verify from './Pages/Verify';
 import Footer from './components/Footer';
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
         <Route path='/my-reports' element={<MyReports />} />
         <Route path='/symptom-checker' element={<SymptomChecker />} />
         <Route path='/video-call/:appointmentId' element={<VideoCall />} />
+        <Route path='/verify' element={<Verify />} />
         <Route path='/appointment/:docId' element={<Appointment />} />
       </Routes>
       <Footer />

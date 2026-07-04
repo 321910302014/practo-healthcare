@@ -33,12 +33,10 @@ const MyReports = () => {
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                         {reports.map((item, index) => (
                             <div key={index} className='flex items-center gap-4 p-4 border rounded-xl hover:shadow-md transition-all bg-white'>
-                                <div className='bg-blue-50 p-4 rounded-lg'>
-                                    <img
-                                        src={item.type === 'prescription' ? assets.appointment_icon : assets.group_profiles}
-                                        className='w-10 h-10 object-contain'
-                                        alt=""
-                                    />
+                                <div className='bg-blue-50 p-4 rounded-lg flex items-center justify-center w-16 h-16'>
+                                    <span className='text-3xl' role='img' aria-label={item.type}>
+                                        {item.type === 'prescription' ? '💊' : '🧪'}
+                                    </span>
                                 </div>
                                 <div className='flex-1 min-w-0'>
                                     <p className='text-gray-800 font-bold truncate'>{item.reportName}</p>
