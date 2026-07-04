@@ -30,7 +30,7 @@ const PatientChat = ({ appointmentId, userId }) => {
         try {
             const { data } = await axios.post(`${backendUrl}/api/chat/send`, {
                 appointmentId,
-                senderType: 'patient',
+                senderType: 'user',
                 senderId: userId,
                 message: newMessage
             });
@@ -89,14 +89,14 @@ const PatientChat = ({ appointmentId, userId }) => {
                     messages.map((msg, index) => (
                         <div
                             key={index}
-                            className={`flex ${msg.senderType === 'patient' ? 'justify-end' : 'justify-start'}`}
+                            className={`flex ${msg.senderType === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                            <div className={`max-w-[85%] p-4 rounded-3xl shadow-sm ${msg.senderType === 'patient'
+                            <div className={`max-w-[85%] p-4 rounded-3xl shadow-sm ${msg.senderType === 'user'
                                     ? 'bg-primary text-white rounded-tr-none'
                                     : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
                                 }`}>
                                 <p className="text-sm leading-relaxed font-medium">{msg.message}</p>
-                                <div className={`flex items-center gap-1 mt-2 opacity-60 text-[8px] uppercase font-black tracking-tighter ${msg.senderType === 'patient' ? 'justify-end' : 'justify-start'
+                                <div className={`flex items-center gap-1 mt-2 opacity-60 text-[8px] uppercase font-black tracking-tighter ${msg.senderType === 'user' ? 'justify-end' : 'justify-start'
                                     }`}>
                                     <Clock size={8} />
                                     <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
