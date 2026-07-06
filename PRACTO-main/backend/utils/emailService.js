@@ -5,7 +5,12 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
-  }
+  },
+  // Fail fast if outbound SMTP is blocked/slow (common on cloud hosts like
+  // Render) instead of hanging the request that awaits the email.
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000
 });
 
 /**

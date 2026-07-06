@@ -20,7 +20,11 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    // Fail fast if SMTP is blocked/slow (e.g. on Render) instead of hanging.
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000
 });
 
 // ========= OTP FUNCTIONS =========
@@ -369,7 +373,7 @@ ${payInClinic ? '💡 Please pay at the clinic reception during your visit.\n' :
 
 Thank you for choosing Prescripta HealthCare.
       `;
-      await sendEmail(user.email, subject, message);
+      sendEmail(user.email, subject, message);
     }
 
     return res.json({ success: true, message: "Appointment Booked", appointment });
@@ -433,7 +437,7 @@ Regards,
 Prescripta HealthCare Team
       `;
 
-      await sendEmail(userData.email, subject, message);
+      sendEmail(userData.email, subject, message);
       console.log(`📨 Cancellation email sent to ${userData.email}`);
     }
 
@@ -490,7 +494,7 @@ const switchAppointmentMode = async (req, res) => {
 
         // Send confirmation email
         if (appointment.userData?.email) {
-          await sendEmail(appointment.userData.email, '✅ Video Appointment Confirmed', `
+          sendEmail(appointment.userData.email, '✅ Video Appointment Confirmed', `
 Hi ${appointment.userData.name},
 
 Your appointment with Dr. ${appointment.docData.name} has been changed to a video consultation.
@@ -513,7 +517,7 @@ Prescripta HealthCare
       await appointment.save();
 
       if (appointment.userData?.email) {
-        await sendEmail(appointment.userData.email, '✅ In-Clinic Appointment Confirmed', `
+        sendEmail(appointment.userData.email, '✅ In-Clinic Appointment Confirmed', `
 Hi ${appointment.userData.name},
 
 Your appointment with Dr. ${appointment.docData.name} has been changed to an in-clinic visit.
@@ -640,7 +644,7 @@ Regards,
 Prescripta HealthCare Team
         `;
 
-        await sendEmail(userData.email, subject, message);
+        sendEmail(userData.email, subject, message);
         console.log(`📨 Confirmation email sent to ${userData.email}`);
       }
 
@@ -712,7 +716,7 @@ New Slot:
 
 Thank you for choosing Prescripta HealthCare.
       `;
-      await sendEmail(appointment.userData.email, subject, message);
+      sendEmail(appointment.userData.email, subject, message);
     }
 
     res.json({ success: true, message: "Appointment rescheduled", appointment });
