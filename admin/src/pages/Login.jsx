@@ -3,7 +3,6 @@ import React, { useContext, useState } from 'react'
 import { DoctorContext } from '../context/DoctorContext'
 import { AdminContext } from '../context/AdminContext'
 import { toast } from 'react-toastify'
-import { assets } from '../assets/assets'
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -13,6 +12,7 @@ const Login = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL
 
@@ -22,30 +22,43 @@ const Login = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
-    if (state === 'Admin') {
-
-      const { data } = await axios.post(backendUrl + '/api/admin/login', { email, password })
-      if (data.success) {
-  setAToken(data.token)
-  localStorage.setItem('aToken', data.token)
-  navigate('/admin-dashboard')
-} else {
-  toast.error(data.message)
-}
-
-    } else {
-
-      const { data } = await axios.post(backendUrl + '/api/doctor/login', { email, password })
-      if (data.success) {
-  setDToken(data.token)
-  localStorage.setItem('dToken', data.token)
-  navigate('/doctor-dashboard')
-} else {
-  toast.error(data.message)
-}
-
+    // Guard: without a backend URL the request would silently go nowhere.
+    if (!backendUrl) {
+      toast.error("VITE_BACKEND_URL is not set for this site. Add it in Render → Environment and redeploy.")
+      return
     }
 
+    setLoading(true)
+    try {
+      const endpoint = state === 'Admin' ? '/api/admin/login' : '/api/doctor/login'
+      const { data } = await axios.post(backendUrl + endpoint, { email, password })
+
+      if (data.success) {
+        if (state === 'Admin') {
+          setAToken(data.token)
+          localStorage.setItem('aToken', data.token)
+          navigate('/admin-dashboard')
+        } else {
+          setDToken(data.token)
+          localStorage.setItem('dToken', data.token)
+          navigate('/doctor-dashboard')
+        }
+        toast.success(`${state} login successful`)
+      } else {
+        toast.error(data.message || 'Login failed')
+      }
+    } catch (err) {
+      // Surface the real reason instead of the button doing nothing.
+      console.error('Login error:', err)
+      const msg =
+        err.response?.data?.message ||
+        (err.code === 'ERR_NETWORK'
+          ? `Cannot reach the server at ${backendUrl}. Check the backend is awake and VITE_BACKEND_URL is correct.`
+          : err.message || 'Login failed')
+      toast.error(msg)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -60,7 +73,9 @@ const Login = () => {
           <p>Password</p>
           <input onChange={(e) => setPassword(e.target.value)} value={password} className='border border-[#DADADA] rounded w-full p-2 mt-1' type="password" required />
         </div>
-        <button className='bg-primary text-white w-full py-2 rounded-md text-base'>Login</button>
+        <button disabled={loading} className='bg-primary text-white w-full py-2 rounded-md text-base disabled:opacity-60'>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
         {
           state === 'Admin'
             ? <p>Doctor Login? <span onClick={() => setState('Doctor')} className='text-primary underline cursor-pointer'>Click here</span></p>
